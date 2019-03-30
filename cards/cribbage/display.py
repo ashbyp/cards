@@ -10,6 +10,12 @@ class Display:
             print(f'  Welcome to Cribbage v0.1')
             print(f'      {player1.name}')
             print(f'      {player2.name}')
+            print()
+            print(f' {player1.name}`s Strategy')
+            print(f' {player1.strategy()}')
+            print()
+            print(f' {player2.name}`s Strategy')
+            print(f' {player2.strategy()}')
             print('*' * 70)
             print()
 
@@ -45,7 +51,7 @@ class Display:
             else:
                 msg += f'Stack Value: {stack_value}\n'
             if player_score:
-                msg += f'Score :      {stack_value} for {score_desc}\n'
+                msg += f'Score :      {player_score} for {score_desc}\n'
             msg += f'Stack:       {stack}\n'
             print(msg)
 
@@ -73,7 +79,7 @@ class Display:
         if self._enabled:
             msg = f'{"Hand" if not is_box else "Box"} score for {player.name}\n'
             msg += f' Cards : {hand}\n'
-            msg += f' Turn  : {turn_card}\n\n\n'
+            msg += f' Turn  : {turn_card}\n\n'
             msg += f'{score_desc}\n'
             msg += f'Score    : {score}\n'
             print(msg)

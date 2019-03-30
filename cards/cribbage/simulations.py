@@ -3,7 +3,6 @@ import datetime
 import numpy as np
 import concurrent.futures
 import multiprocessing
-import random
 
 from cards.base import card
 from cards.cribbage import score
@@ -95,48 +94,62 @@ class TargetScoreSimulation(Simulator):
 
 class PlayerPerformanceSimulator(Simulator):
 
-    def __init__(self, player):
-        self._player1 = player
-        self._player2 = RandomComputerPlayer()
+    def __init__(self, player1, player2=RandomComputerPlayer()):
+        self._player1 = player1
+        self._player2 = player2
 
     def run(self, num_games):
         display = Display(False)
         collector = Collector(self._player1, self._player2)
         game = Game(self._player1, self._player2, stats=collector, display=display)
 
-        start_time = timeit.default_timer()
         for _ in range(num_games):
             game.play()
-        time_taken = timeit.default_timer() - start_time
 
-        print(f'Simulations: {num_games} :: {collector} :: Time {time_taken}')
         self.record_results(self.__class__.__name__, num_games, collector)
         return collector
 
 
-class PlayerPerformanceComparisonSimulator(Simulator):
-    def run(self, num_sims, games_per_sim=1000, seed=None):
-        if seed:
-            random.seed(seed)
-        v1_sim = PlayerPerformanceSimulator(ComputerPlayerV1())
-        [v1_sim.run(games_per_sim) for _ in range(num_sims)]
-        if seed:
-            random.seed(seed)
-        v2_sim = PlayerPerformanceSimulator(ComputerPlayerV2())
-        [v2_sim.run(games_per_sim) for _ in range(num_sims)]
-        if seed:
-            random.seed(seed)
-        v3_sim = PlayerPerformanceSimulator(ComputerPlayerV3())
-        [v3_sim.run(games_per_sim) for _ in range(num_sims)]
-        if seed:
-            random.seed(seed)
-        v4_sim = PlayerPerformanceSimulator(ComputerPlayerV4())
-        [v4_sim.run(games_per_sim) for _ in range(num_sims)]
+class PlayerComparisonSimulator(Simulator):
+
+    @staticmethod
+    def _run_sim(simulator, games_per_sim):
+        return simulator.run(games_per_sim)
+
+    def _run_for_player(self, player, num_sims, games_per_sim):
+        opp = RandomComputerPlayer()
+        start_time = timeit.default_timer()
+        with multiprocessing.Pool() as pool:
+            results = pool.starmap(self._run_sim, [(PlayerPerformanceSimulator(player, opp), games_per_sim)] * num_sims)
+        time_taken = timeit.default_timer() - start_time
+        results = Collector.combine(results, player, opp)
+        print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Time {time_taken}')
+        self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
+
+    def run(self, num_sims=5, games_per_sim=200):
+        players = [ComputerPlayerV1(), ComputerPlayerV2(), ComputerPlayerV3()]
+        for player in players:
+            self._run_for_player(player, num_sims, games_per_sim)
 
 
 if __name__ == '__main__':
-    sim = PlayerPerformanceComparisonSimulator()
-    sim.run(1, 1000, seed=123)
+    sim = PlayerComparisonSimulator()
+    sim.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
