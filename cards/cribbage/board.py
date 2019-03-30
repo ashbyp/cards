@@ -4,7 +4,7 @@ from collections import OrderedDict
 class GameWonException(Exception):
     def __init__(self, winning_player, winning_player_score):
         super().__init__(f'{winning_player.name} won with {winning_player_score}')
-        self._winning_player = winning_player
+        self.winning_player = winning_player
 
 
 class Board:

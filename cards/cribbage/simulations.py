@@ -134,7 +134,7 @@ class PlayerComparisonSimulator(Simulator):
         print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Adv :: {advantage:.3f} :: Time {time_taken:.1f}')
         self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
 
-    def run(self, num_sims=5, games_per_sim=200):
+    def run(self, num_sims=5, games_per_sim=300):
         players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
                    ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6()]
         for player in players:
