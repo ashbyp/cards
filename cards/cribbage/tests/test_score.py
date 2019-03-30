@@ -77,19 +77,6 @@ Pairs    : [5D, 5S]'''
 
         self.assertEqual(29, score.score_hand(Card.from_str_list('jc,5d,5h,5s'), Card.from_str('5c')))
 
-    def test_choose_best_hand_multiple_matches(self):
-        best = score.choose_best_hand(Card.from_str_list('ac,2c,9c,7c,3s,kd'), 4)
-        self.assertEqual(2, len(best))
-        self.assertEqual(5, best[0][0])
-        self.assertTrue(set(Card.from_str_list('AC,2C,9C,3S')) in [set(x[1]) for x in best])
-        self.assertTrue(set(Card.from_str_list('AC, 2C, 3S, KD')) in [set(x[1]) for x in best])
-
-    def test_choose_best_hand_single_match(self):
-        best = score.choose_best_hand(Card.from_str_list('2d, 3d, 4d, 5d, 9c, 9s'), 4)
-        self.assertEqual(1, len(best))
-        self.assertEqual(8, best[0][0])
-        self.assertTrue(set(Card.from_str_list('2d, 3d, 4d, 5d')) in [set(x[1]) for x in best])
-
     def test_score_pegging_stack_no_score(self):
         stack = []
         sc, desc = score.score_pegging_stack(stack)

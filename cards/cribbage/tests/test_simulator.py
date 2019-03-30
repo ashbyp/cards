@@ -10,6 +10,7 @@ class TestSimulator(TestCase):
 
     def test_comparison(self):
         if not self.is_win:
-            sim = PlayerComparisonSimulator()
+            print('\n\nRunning simulations')
+            sim = PlayerComparisonSimulator(keep_alive=True)
             sim.run()
         self.assertTrue(True)

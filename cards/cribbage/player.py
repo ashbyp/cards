@@ -1,8 +1,46 @@
 import random
 import itertools
-import numpy as np
 from cards.base.card import Card, standard_deck
 from cards.cribbage import score
+
+
+def choose_best_hand_ignore_box(hand, hand_size):
+    best = []
+
+    for comb in itertools.combinations(hand, hand_size):
+        comb = list(comb)
+        sc = score.score_hand(comb, None)
+        if not best:
+            best = [(sc, comb)]
+        elif sc > best[0][0]:
+            best = [(sc, comb)]
+        elif sc == best[0][0]:
+            best.append((sc, comb))
+
+    return best
+
+
+def choose_best_hand(hand, hand_size, my_box):
+    best = []
+
+    for comb in itertools.combinations(hand, hand_size):
+        comb = list(comb)
+        box = [x for x in hand if x not in comb]
+        sc = score.score_hand(comb, None)
+        box_sc = 2 if (box[0].rank == box[1].rank or box[0].value + box[1].value == 15) else 0
+        if my_box:
+            sc += box_sc
+        else:
+            sc -= box_sc
+
+        if not best:
+            best = [(sc, comb, box)]
+        elif sc > best[0][0]:
+            best = [(sc, comb, box)]
+        elif sc == best[0][0]:
+            best.append((sc, comb, box))
+
+    return best
 
 
 class Player:
@@ -14,7 +52,7 @@ class Player:
     def name(self):
         return self._name
 
-    def choose_discards(self, hand, your_box):
+    def choose_discards(self, hand, my_box):
         raise NotImplementedError()
 
     def next_pegging_card(self, stack, hand, turn_card):
@@ -35,7 +73,7 @@ class DumbComputerPlayer(Player):
         else:
             super().__init__(name)
 
-    def choose_discards(self, hand, your_box):
+    def choose_discards(self, hand, my_box):
         return hand[0:2]
 
     def next_pegging_card(self, stack, hand, turn_card):  #
@@ -59,7 +97,7 @@ class RandomComputerPlayer(Player):
         else:
             super().__init__(name)
 
-    def choose_discards(self, hand, your_box):
+    def choose_discards(self, hand, my_box):
         return random.sample(hand, 2)
 
     def next_pegging_card(self, stack, hand, turn_card):  #
@@ -80,7 +118,7 @@ class HumanPlayer(DumbComputerPlayer):  # for now
         super().__init__(name)
         self._strategy = input('\n --> What is your strategy? ') or 'Not declared'
 
-    def choose_discards(self, hand, your_box):
+    def choose_discards(self, hand, my_box):
         print(f'\n --> Your dealt cards are: {hand}')
         while True:
             try:
@@ -138,8 +176,8 @@ class ComputerPlayerV1(Player):
         else:
             super().__init__(name)
 
-    def choose_discards(self, hand, your_box):
-        best = score.choose_best_hand(hand, 4)[0][1]
+    def choose_discards(self, hand, my_box):
+        best = choose_best_hand_ignore_box(hand, 4)[0][1]
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
@@ -219,14 +257,35 @@ class ComputerPlayerV3(ComputerPlayerV2):
 
     def __init__(self, name=None):
         if not name:
-            super().__init__(f'CompV3_{ComputerPlayerV3.ME_COUNT}')
-            ComputerPlayerV3.ME_COUNT += 1
+            super().__init__(f'CompV2_{ComputerPlayerV2.ME_COUNT}')
+            ComputerPlayerV2.ME_COUNT += 1
+        else:
+            super().__init__(name)
+
+    def choose_discards(self, hand, my_box):
+        best = score.choose_best_hand(hand, 4, my_box)[0][1]
+        return [x for x in hand if x not in best]
+
+    def strategy(self):
+        return "I will discard two cards that leave the best score in my hand, taking account of the score of\n" +\
+               " the cards thrown into the box .  When pegging, I will play the card that gives\n" +\
+               " me the best score, or if all equal, then a random car and will prefer not to leave a stack count\n" +\
+               " of 5 or 21"
+
+
+class ComputerPlayerV4(ComputerPlayerV3):
+    ME_COUNT = 1
+
+    def __init__(self, name=None):
+        if not name:
+            super().__init__(f'CompV3_{ComputerPlayerV4.ME_COUNT}')
+            ComputerPlayerV4.ME_COUNT += 1
         else:
             super().__init__(name)
 
         self._deck = standard_deck()
 
-    def choose_discards(self, hand, your_box):
+    def choose_discards(self, hand, my_box):
         # for each possible set of 4 cards in the hand
         #   find score for each possible turn card
         #   average the scores
@@ -258,17 +317,3 @@ class ComputerPlayerV3(ComputerPlayerV2):
                 " then a random card; and will prefer not to leave a stack count of 5 or 21"
 
 
-class ComputerPlayerV4(ComputerPlayerV3):
-    ME_COUNT = 1
-
-    def __init__(self, name=None):
-        if not name:
-            super().__init__(f'CompV4_{ComputerPlayerV4.ME_COUNT}')
-            ComputerPlayerV4.ME_COUNT += 1
-        else:
-            super().__init__(name)
-
-    def next_pegging_card(self, stack, hand, turn_card):
-        # TODO
-        # same as parent but try to avoid leaving runs
-        return super().next_pegging_card(stack, hand, turn_card)
