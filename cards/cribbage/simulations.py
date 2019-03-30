@@ -9,8 +9,8 @@ from cards.cribbage import score
 from cards.cribbage.stats import Collector
 from cards.cribbage.game import Game
 from cards.cribbage.display import Display
-from cards.cribbage.player import RandomComputerPlayer, ComputerPlayerV1, ComputerPlayerV2, ComputerPlayerV3, \
-    ComputerPlayerV4, ComputerPlayerV5
+from cards.cribbage.player import best_hand_ignore_box, RandomComputerPlayer, ComputerPlayerV1, ComputerPlayerV2, \
+    ComputerPlayerV3, ComputerPlayerV4, ComputerPlayerV5, ComputerPlayerV6
 
 
 class Simulator:
@@ -52,7 +52,7 @@ class TargetScoreSimulation(Simulator):
         while True:
             deck.shuffle()
             h = deck.deal_one(6)
-            sh = score.choose_best_hand(h, 4)
+            sh = best_hand_ignore_box(h, 4)
             t = deck.next_card()
             hs = score.score_hand(sh[0][1], t)
             deck.return_cards(h)
@@ -130,11 +130,13 @@ class PlayerComparisonSimulator(Simulator):
                                                     games_per_sim)] * num_sims)
         time_taken = timeit.default_timer() - start_time
         results = Collector.combine(results, player, opp)
-        print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Time {time_taken}')
+        advantage = results.rating(player) - results.rating(opp)
+        print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Adv :: {advantage:.3f} :: Time {time_taken:.1f}')
         self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
 
     def run(self, num_sims=5, games_per_sim=200):
-        players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(), ComputerPlayerV4(), ComputerPlayerV5()]
+        players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
+                   ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6()]
         for player in players:
             self._run_for_player(player, num_sims, games_per_sim)
 

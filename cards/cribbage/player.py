@@ -147,6 +147,46 @@ def best_peg_cards_skip_5s_and_21s(stack, hand):
     return None
 
 
+def best_peg_cards_skip_5s_and_21s_no_runs(stack, hand):
+    stack_score = sum([x.value for x in stack])
+    score_per_card = []  # tuples (score, stack_score)
+    for card in hand:
+        if stack_score + card.value <= 31:
+            score_per_card.append((score.score_pegging_stack(stack + [card])[0], stack_score + card.value))
+        else:
+            score_per_card.append((None, None))
+
+    if all(x[0] is None for x in score_per_card):
+        return None
+
+    best_score = max(x[0] for x in score_per_card if x[0] is not None)
+
+    possible_plays = []
+
+    for i, s in enumerate(score_per_card):
+        if s[0] == best_score:
+            possible_plays.append((s[1], hand[i]))
+
+    def filter_runs(plays):
+        if len(plays) == 1 or len(stack) == 0:
+            return plays[0][1]
+
+        for _, c in plays:
+            if abs(c.rank - stack[-1].rank) > 2:
+                return c
+
+        return plays[0][1]
+
+    if possible_plays:
+        best_possible_plays = [x for x in possible_plays if x[0] not in (5, 21)]
+        if best_possible_plays:
+            return filter_runs(best_possible_plays)
+        else:
+            return filter_runs(possible_plays)
+
+    return None
+
+
 class Player:
     def __init__(self, name):
         self._name = name
@@ -392,8 +432,34 @@ class ComputerPlayerV5(Player):
                 " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
                 " equal then a random card; and will prefer not to leave a stack count of 5 or 21"
 
+
+class ComputerPlayerV6(Player):
+    ME_COUNT = 1
+
+    def __init__(self, name=None):
+        if not name:
+            super().__init__(f'CompV6_{ComputerPlayerV6.ME_COUNT}')
+            ComputerPlayerV4.ME_COUNT += 1
+        else:
+            super().__init__(name)
+
+        self._deck = standard_deck()
+
+    def choose_discards(self, hand, my_box):
+        best = best_average_hand_count_box(hand, 4, self._deck, my_box)
+        return [x for x in hand if x not in best]
+
+    def next_pegging_card(self, stack, hand, turn_card):
+        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand)
+
+    def strategy(self):
+        return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
+                " gives me the highest average hand score, I will add or subtract the discard score depending on\n" +\
+                " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
+                " equal then a random card; and will prefer not to leave a stack count of 5 or 21, or a potential \n" +\
+                " run for my opponent"
+
 # TODO
-# Pegging strategy that doesn't leave runs
 # Discard strategy that checks the average score for the box, with all possible turns
 
 
