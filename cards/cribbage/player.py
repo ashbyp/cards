@@ -70,12 +70,6 @@ def best_average_hand_ignore_box(hand, hand_size, deck):
 
 
 def best_average_hand_count_box(hand, hand_size, deck, my_box):
-    # for each possible set of 4 cards in the hand
-    #   find score for each possible turn card
-    #   average the scores
-    #   choose hand with highest average
-    # this method sucks in sim mode, ok for interactive
-
     possible_turns = [x for x in deck if x not in hand]
     hand_scores = []
 
@@ -397,6 +391,10 @@ class ComputerPlayerV5(Player):
                 " gives me the highest average hand score, I will add or subtract the discard score depending on\n" +\
                 " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
                 " equal then a random card; and will prefer not to leave a stack count of 5 or 21"
+
+# TODO
+# Pegging strategy that doesn't leave runs
+# Discard strategy that checks the average score for the box, with all possible turns
 
 
 if __name__ == '__main__':

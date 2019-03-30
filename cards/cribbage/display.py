@@ -6,26 +6,26 @@ class Display:
     def welcome(self, player1, player2):
         if self._enabled:
             print()
-            print('*' * 70)
+            print('*' * 80)
             print(f'  Welcome to Cribbage v0.1')
             print(f'      {player1.name}')
             print(f'      {player2.name}')
             print()
-            print(f' {player1.name}`s Strategy')
+            print(f' {player1.name}\'s Strategy')
             print(f' {player1.strategy()}')
             print()
-            print(f' {player2.name}`s Strategy')
+            print(f' {player2.name}\'s Strategy')
             print(f' {player2.strategy()}')
-            print('*' * 70)
+            print('*' * 80)
             print()
 
     def announce_win(self, board):
         if self._enabled:
             print()
-            print('*' * 70)
+            print('*' * 80)
             print(f'  Winner')
             print(f'      {board}')
-            print('*' * 70)
+            print('*' * 80)
             print()
 
     def cut(self, dealer, dealer_card, non_dealer, non_dealer_card):
