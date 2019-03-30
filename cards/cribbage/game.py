@@ -162,9 +162,9 @@ class Game:
         else:
             self._stats.add_hand_score(player, sc)
 
-    def play(self,  board=None):
+    def play(self,  board=None, deck=None):
         board = board or Board(self._player1, self._player2, 121)
-        deck = Deck()
+        deck = deck or Deck()
         deck.shuffle()
         dealer, non_dealer, dealer_card, non_dealer_card = self.decide_dealer(deck)
 
@@ -197,6 +197,8 @@ class Game:
                 dealer, non_dealer = non_dealer, dealer
 
                 self._display.new_dealer(dealer, board)
+                deck.shuffle()
+
             except GameWonException as gwe:
                 self._trace(gwe)
                 self._display.announce_win(board)

@@ -394,9 +394,9 @@ class ComputerPlayerV5(Player):
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
-                " gives me the highest average hand score, I will not consider the score of the cards thrown into\n" +\
-                " the box.  When pegging, I will play the card that gives me the best score, or if all equal\n" +\
-                " then a random card; and will prefer not to leave a stack count of 5 or 21"
+                " gives me the highest average hand score, I will add or subtract the discard score depending on\n" +\
+                " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
+                " equal then a random card; and will prefer not to leave a stack count of 5 or 21"
 
 
 if __name__ == '__main__':
