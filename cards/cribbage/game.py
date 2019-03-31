@@ -155,12 +155,14 @@ class Game:
 
     def score_hand(self, player, hand, turn_card, board, is_box):
         sc, breakdown = score.score_hand_with_breakdown(hand, turn_card, is_box)
-        board.add_points(player, sc)
+
         self._display.score_hand(player, hand, turn_card, sc, score.breakdown_tostring(breakdown), is_box)
         if is_box:
             self._stats.add_box_score(player, sc)
         else:
             self._stats.add_hand_score(player, sc)
+
+        board.add_points(player, sc)
 
     def play(self,  board=None, deck=None):
         board = board or Board(self._player1, self._player2, 121)
