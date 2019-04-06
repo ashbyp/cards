@@ -177,9 +177,14 @@ def any_suit_runs(cards, min_run_size):
     potential = []
 
     for i in range(min_run_size, len(cards) + 1):
+        found_run_at_len_i = False
         for comb in itertools.combinations(cards, i):
             if is_run(comb):
                 potential.append(set(comb))
+                found_run_at_len_i = True
+        if not found_run_at_len_i:
+            # no point checking longer runs if we didn't find any or the shorter ones
+            break
 
     deduped = []
     for s in potential:
@@ -199,3 +204,6 @@ def flushes(cards, min_flush_size):
 def pairs(hand):
     return [list(comb) for comb in itertools.combinations(hand, 2) if comb[0].rank == comb[1].rank]
 
+
+if __name__ == '__main__':
+    print(any_suit_runs(Card.from_str_list('3D, AC, 5S, 10c, Jc, Qc'), 3))
