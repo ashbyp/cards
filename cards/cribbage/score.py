@@ -9,8 +9,7 @@ def runs(hand, turn_card):
 def flushes(hand, turn_card, is_box):
     if is_box:
         if turn_card:
-            if card.flushes(hand, 4):
-                return card.flushes(hand + [turn_card], 5)
+            return card.flushes(hand + [turn_card], 5)
     else:
         if turn_card:
             if card.flushes(hand, 4):

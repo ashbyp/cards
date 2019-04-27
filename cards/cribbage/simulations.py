@@ -149,10 +149,10 @@ def profile_player(player):
 
 
 if __name__ == '__main__':
-    sim = PlayerComparisonSimulator()
-    sim.run()
+    # sim = PlayerComparisonSimulator()
+    # sim.run()
 
-    # profile_player(ComputerPlayerV6())
+    profile_player(ComputerPlayerV6())
 
 
 

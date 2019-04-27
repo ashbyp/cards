@@ -141,7 +141,7 @@ def standard_deck():
 def split_suits(cards):
     split = {}
     for suit in SUITS:
-        split[suit] = sorted([c for c in cards if c.suit == suit])
+        split[suit] = [c for c in cards if c.suit == suit]
     return split
 
 
