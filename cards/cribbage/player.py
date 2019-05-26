@@ -491,7 +491,7 @@ class ComputerPlayerV7(Player):
     def __init__(self, name=None):
         if not name:
             super().__init__(f'CompV7_{ComputerPlayerV7.ME_COUNT}')
-            ComputerPlayerV6.ME_COUNT += 1
+            ComputerPlayerV7.ME_COUNT += 1
         else:
             super().__init__(name)
 
@@ -502,7 +502,7 @@ class ComputerPlayerV7(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand) if stack else handle_empty_stack(stack, turn_card)
+        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand) if stack else handle_empty_stack(hand, turn_card)
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
