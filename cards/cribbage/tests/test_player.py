@@ -168,5 +168,20 @@ class TestPlayer(TestCase):
         pegging_card = player.best_peg_cards_skip_5s_and_21s_no_runs(stack, hand)
         self.assertEqual(Card.from_str('7s'), pegging_card)
 
+    def test_handle_empty_stack_no_pairs(self):
+        hand = Card.from_str_list('5s,2c,7s,jd')
+        card = player.handle_empty_stack(hand, Card.from_str('qs'))
+        self.assertEqual(Card.from_str('2c'), card)
+
+    def test_handle_empty_stack_pair(self):
+        hand = Card.from_str_list('jc,2c,7s,jd')
+        card = player.handle_empty_stack(hand, Card.from_str('qs'))
+        self.assertEqual(Card.from_str('jc'), card)
+
+    def test_handle_empty_stack_see_one_play_one(self):
+        hand = Card.from_str_list('jc,2c,7s,qd')
+        card = player.handle_empty_stack(hand, Card.from_str('qs'))
+        self.assertEqual(Card.from_str('qd'), card)
+
 
 

@@ -7,8 +7,8 @@ class Collector:
 
     def __init__(self, p1, p2):
         self.stats = OrderedDict({
-            p1.name: {'pegging': [], 'hand': [], 'box': []},
-            p2.name: {'pegging': [], 'hand': [], 'box': []},
+            p1.name: {'pegging': [], 'hand': [], 'box': [], 'win': 0},
+            p2.name: {'pegging': [], 'hand': [], 'box': [], 'win': 0},
         })
 
     def add_pegging_score(self, player, score):
@@ -19,6 +19,9 @@ class Collector:
 
     def add_box_score(self, player, score):
         self.stats[player.name]['box'].append(score)
+
+    def add_win(self, player):
+        self.stats[player.name]['win'] = self.stats[player.name]['win'] + 1
         
     def averages(self, player):
         player_name = player.name if isinstance(player, Player) else player
@@ -39,7 +42,8 @@ class Collector:
     def _averages_tostring(self, player_name):
         averages = self.averages(player_name)
         overall = sum(averages)
-        return f'{player_name}: avg peg %.2f avg hand %.2f avg box %.2f overall %.2f' % (*averages, overall)
+        return f'{player_name}: avg peg %.2f avg hand %.2f avg box %.2f overall %.2f win %d' % \
+               (*averages, overall, self.stats[player_name]['win'])
 
     def __str__(self):
         return str([self._averages_tostring(k) for k in self.stats])
@@ -51,8 +55,10 @@ class Collector:
             combined.stats[p1.name]['pegging'] += collector.stats[p1.name]['pegging']
             combined.stats[p1.name]['hand'] += collector.stats[p1.name]['hand']
             combined.stats[p1.name]['box'] += collector.stats[p1.name]['box']
+            combined.stats[p1.name]['win'] += collector.stats[p1.name]['win']
             combined.stats[p2.name]['pegging'] += collector.stats[p2.name]['pegging']
             combined.stats[p2.name]['hand'] += collector.stats[p2.name]['hand']
             combined.stats[p2.name]['box'] += collector.stats[p2.name]['box']
+            combined.stats[p2.name]['win'] += collector.stats[p2.name]['win']
         return combined
 

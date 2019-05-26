@@ -1,6 +1,6 @@
 import random
 import itertools
-from cards.base.card import Card, standard_deck
+from cards.base.card import Card, standard_deck, pairs
 from cards.cribbage import score
 
 
@@ -191,6 +191,25 @@ def best_peg_cards_skip_5s_and_21s_no_runs(stack, hand):
             return filter_runs(possible_plays)
 
     return None
+
+
+def handle_empty_stack(hand, turn_card):
+    if not hand:
+        return None
+
+    if len(hand) == 1:
+        return hand[0]
+
+    if len(hand) > 2:
+        pair_cards = pairs(hand)
+        if pair_cards:
+            return pair_cards[0][0]
+
+    see_one_play_one = [x for x in hand if x.rank == turn_card.rank]
+    if see_one_play_one:
+        return see_one_play_one[0]
+
+    return min(hand)
 
 
 class Player:
@@ -464,6 +483,34 @@ class ComputerPlayerV6(Player):
                 " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
                 " equal then a random card; and will prefer not to leave a stack count of 5 or 21, or a potential \n" +\
                 " run for my opponent"
+
+
+class ComputerPlayerV7(Player):
+    ME_COUNT = 1
+
+    def __init__(self, name=None):
+        if not name:
+            super().__init__(f'CompV7_{ComputerPlayerV7.ME_COUNT}')
+            ComputerPlayerV6.ME_COUNT += 1
+        else:
+            super().__init__(name)
+
+        self._deck = standard_deck()
+
+    def choose_discards(self, hand, my_box):
+        best = best_average_hand_count_box(hand, 4, self._deck, my_box)
+        return [x for x in hand if x not in best]
+
+    def next_pegging_card(self, stack, hand, turn_card):
+        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand) if stack else handle_empty_stack(stack, turn_card)
+
+    def strategy(self):
+        return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
+                " gives me the highest average hand score, I will add or subtract the discard score depending on\n" +\
+                " whose deal it is. When pegging, I will play the card that gives me the best score, or if all \n" +\
+                " equal then a random card; and will prefer not to leave a stack count of 5 or 21, or a potential \n" +\
+                " run for my opponent.  When the stack is empty I will play a pair leader if I have a pair, else \n" + \
+                " I'll play my lowest card"
 
 # TODO
 # Discard strategy that checks the average score for the box, with all possible turns

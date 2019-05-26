@@ -204,6 +204,7 @@ class Game:
             except GameWonException as gwe:
                 self._trace(gwe)
                 self._display.announce_win(board)
+                self._stats.add_win(gwe.winning_player)
                 return gwe.winning_player
 
 
