@@ -294,7 +294,7 @@ class HumanPlayer(DumbComputerPlayer):  # for now
                 user_input = None
                 while not user_input:
                     user_input = input('\n --> What will you discard? ')
-                cards = Card.from_str_list(user_input)
+                cards = Card.from_str_list(user_input.replace(' ', ','))
                 if set(cards).issubset(set(hand)):
                     if len(set(cards)) == 2:
                         return cards
