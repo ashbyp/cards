@@ -94,7 +94,7 @@ class TargetScoreSimulation(Simulator):
 
 class PlayerPerformanceSimulator(Simulator):
 
-    def __init__(self, player1, player2=RandomComputerPlayer(), keep_alive=False):
+    def __init__(self, player1, player2, keep_alive=False):
         self._player1 = player1
         self._player2 = player2
         self._keep_alive = keep_alive
@@ -135,9 +135,8 @@ class PlayerComparisonSimulator(Simulator):
         self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
 
     def run(self, num_sims=5, games_per_sim=300):
-        players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
-                   ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6(),
-                   ComputerPlayerV7()]
+        players = [RandomComputerPlayer(), ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
+                   ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6(), ComputerPlayerV7()]
         for player in players:
             self._run_for_player(player, num_sims, games_per_sim)
 
