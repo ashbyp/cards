@@ -4,6 +4,25 @@ from cards.base.card import Card, standard_deck, pairs
 from cards.cribbage import score
 
 
+class Player:
+    def __init__(self, name):
+        self._name = name
+        self._score = 0
+
+    @property
+    def name(self):
+        return self._name
+
+    def choose_discards(self, hand, my_box):
+        raise NotImplementedError()
+
+    def next_pegging_card(self, stack, hand, turn_card):
+        raise NotImplementedError()
+
+    def strategy(self):
+        raise NotImplementedError()
+
+
 def best_hand_ignore_box(hand, hand_size):
     best = []
 
@@ -119,7 +138,7 @@ def best_peg_card(stack, hand):
     return None
 
 
-def best_peg_cards_skip_5s_and_21s(stack, hand):
+def best_peg_card_skip_5s_and_21s(stack, hand):
     stack_score = sum([x.value for x in stack])
     score_per_card = []  # tuples (score, stack_score)
     for card in hand:
@@ -151,7 +170,7 @@ def best_peg_cards_skip_5s_and_21s(stack, hand):
     return None
 
 
-def best_peg_cards_skip_5s_and_21s_no_runs(stack, hand):
+def best_peg_card_skip_5s_and_21s_no_runs(stack, hand):
     stack_score = sum([x.value for x in stack])
     score_per_card = []  # tuples (score, stack_score)
     for card in hand:
@@ -210,25 +229,6 @@ def handle_empty_stack(hand, turn_card):
         return see_one_play_one[0]
 
     return min(hand)
-
-
-class Player:
-    def __init__(self, name):
-        self._name = name
-        self._score = 0
-
-    @property
-    def name(self):
-        return self._name
-
-    def choose_discards(self, hand, my_box):
-        raise NotImplementedError()
-
-    def next_pegging_card(self, stack, hand, turn_card):
-        raise NotImplementedError()
-
-    def strategy(self):
-        raise NotImplementedError()
 
 
 class DumbComputerPlayer(Player):
@@ -373,7 +373,7 @@ class ComputerPlayerV2(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s(stack, hand)
+        return best_peg_card_skip_5s_and_21s(stack, hand)
 
     def strategy(self):
         return "I will discard two cards that leave the best score in my hand, I will not consider the score of\n" +\
@@ -397,7 +397,7 @@ class ComputerPlayerV3(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s(stack, hand)
+        return best_peg_card_skip_5s_and_21s(stack, hand)
 
     def strategy(self):
         return "I will discard two cards that leave the best score in my hand, taking account of the score of\n" +\
@@ -423,7 +423,7 @@ class ComputerPlayerV4(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s(stack, hand)
+        return best_peg_card_skip_5s_and_21s(stack, hand)
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
@@ -449,7 +449,7 @@ class ComputerPlayerV5(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s(stack, hand)
+        return best_peg_card_skip_5s_and_21s(stack, hand)
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
@@ -475,7 +475,7 @@ class ComputerPlayerV6(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand)
+        return best_peg_card_skip_5s_and_21s_no_runs(stack, hand)
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
@@ -502,7 +502,7 @@ class ComputerPlayerV7(Player):
         return [x for x in hand if x not in best]
 
     def next_pegging_card(self, stack, hand, turn_card):
-        return best_peg_cards_skip_5s_and_21s_no_runs(stack, hand) if stack else handle_empty_stack(hand, turn_card)
+        return best_peg_card_skip_5s_and_21s_no_runs(stack, hand) if stack else handle_empty_stack(hand, turn_card)
 
     def strategy(self):
         return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\

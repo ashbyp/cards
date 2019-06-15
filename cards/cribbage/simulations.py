@@ -143,14 +143,14 @@ class PlayerComparisonSimulator(Simulator):
 
 def profile_player(player):
     global sim
-    sim = PlayerPerformanceSimulator(player)
+    sim = PlayerPerformanceSimulator(player, RandomComputerPlayer())
     import cProfile
     cProfile.run('sim.run(100)')
 
 
 if __name__ == '__main__':
     sim = PlayerComparisonSimulator()
-    sim.run()
+    sim.run(1, 50)
 
     # profile_player(ComputerPlayerV6())
 

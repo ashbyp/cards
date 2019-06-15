@@ -139,10 +139,7 @@ def standard_deck():
 
 
 def split_suits(cards):
-    split = {}
-    for suit in SUITS:
-        split[suit] = [c for c in cards if c.suit == suit]
-    return split
+    return {suit: [c for c in cards if c.suit == suit] for suit in SUITS}
 
 
 def split_ranks(cards):
