@@ -19,6 +19,8 @@ class TestCard(TestCase):
             Card('xx', 'S')
         with self.assertRaises(ValueError):
             Card('10', 'NotExist')
+        with self.assertRaises(ValueError):
+            Card('0', 'S')
 
     def test_cards_from_str_list(self):
         cards = Card.from_str_list('AD,1D,10S')

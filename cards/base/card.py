@@ -17,7 +17,7 @@ class Card:
     def __init__(self, rank, suit):
         try:
             self._rank = int(rank)
-            if self._rank < 0 or self._rank > 13:
+            if self._rank < 1 or self._rank > 13:
                 raise ValueError('rank must be between 1-13')
         except ValueError as e:
             raise ValueError("rank must be an integer", e)
