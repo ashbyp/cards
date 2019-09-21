@@ -1,7 +1,7 @@
 import random
 import timeit
 from unittest import TestCase
-from cards.base.card import Card, standard_deck, split_suits, split_ranks
+from cards.base.card import Card, standard_deck, split_suits, split_ranks, pairs, three_of_a_kind, four_of_a_kind
 
 
 class TestCard(TestCase):
@@ -99,5 +99,12 @@ class TestCard(TestCase):
         self.assertDictEqual(
             ranks,
             {2: [Card.from_str('2d')], 3: [Card.from_str('3c')], 5: Card.from_str_list('5h,5s')})
+
+    def test_sets(self):
+        cards = Card.from_str_list('AC,AD,AH,AS,2C,2D,2H,3C,3H')
+        self.assertEqual(10, len(pairs(cards)))
+        self.assertEqual(5, len(three_of_a_kind(cards)))
+        self.assertEqual(1, len(four_of_a_kind(cards)))
+
 
 

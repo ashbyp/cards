@@ -199,7 +199,19 @@ def flushes(cards, min_flush_size):
 
 
 def pairs(hand):
-    return [list(comb) for comb in itertools.combinations(hand, 2) if comb[0].rank == comb[1].rank]
+    return [list(comb) for comb in itertools.combinations(hand, 2)
+            if comb[0].rank == comb[1].rank]
+
+
+def three_of_a_kind(hand):
+    z= [list(comb) for comb in itertools.combinations(hand, 3)
+            if comb[0].rank == comb[1].rank == comb[2].rank]
+    return z
+
+
+def four_of_a_kind(hand):
+    return [list(comb) for comb in itertools.combinations(hand, 4)
+            if comb[0].rank == comb[1].rank == comb[2].rank == comb[3].rank]
 
 
 if __name__ == '__main__':
