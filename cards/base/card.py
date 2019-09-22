@@ -139,7 +139,7 @@ def standard_deck():
 
 
 def split_suits(cards):
-    return {suit: [c for c in cards if c.suit == suit] for suit in SUITS}
+    return {suit: sorted([c for c in cards if c.suit == suit]) for suit in SUITS}
 
 
 def split_ranks(cards):
@@ -170,7 +170,7 @@ def is_run(cards):
     return True
 
 
-def any_suit_runs(cards, min_run_size):
+def any_suit_runs(cards, min_run_size, dedupe=True):
     potential = []
 
     for i in range(min_run_size, len(cards) + 1):
@@ -183,6 +183,9 @@ def any_suit_runs(cards, min_run_size):
             # no point checking longer runs if we didn't find any or the shorter ones
             break
 
+    if not dedupe:
+        return [sorted(list(p)) for p in potential]
+
     deduped = []
     for s in potential:
         subset = False
@@ -190,8 +193,18 @@ def any_suit_runs(cards, min_run_size):
             if s.issubset(o) and s is not o:
                 subset = True
         if not subset:
-            deduped.append(list(s))
+            deduped.append(sorted(list(s)))
     return deduped
+
+
+def same_suit_all_runs(cards, min_run_size):
+    split = split_suits(cards)
+    all_runs = []
+    for same_suit in split.values():
+        runs = any_suit_runs(same_suit, min_run_size, False)
+        if runs:
+            all_runs += runs
+    return all_runs
 
 
 def flushes(cards, min_flush_size):
@@ -204,9 +217,8 @@ def pairs(hand):
 
 
 def three_of_a_kind(hand):
-    z= [list(comb) for comb in itertools.combinations(hand, 3)
+    return [list(comb) for comb in itertools.combinations(hand, 3)
             if comb[0].rank == comb[1].rank == comb[2].rank]
-    return z
 
 
 def four_of_a_kind(hand):

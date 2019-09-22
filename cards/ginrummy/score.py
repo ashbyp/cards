@@ -1,4 +1,4 @@
-from base.card import three_of_a_kind, four_of_a_kind
+from base.card import three_of_a_kind, four_of_a_kind, same_suit_all_runs
 
 
 def find_all_melds(hand):
@@ -9,6 +9,14 @@ def find_all_melds(hand):
         four = four_of_a_kind(hand)
         if four:
             melds += four
+
+    for run_len in range(3, len(hand) + 1):
+        runs = same_suit_all_runs(hand, run_len)
+        if runs:
+            melds += runs
+        else:
+            break
+
     return melds
 
 
