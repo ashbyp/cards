@@ -1,5 +1,6 @@
 import random
 import itertools
+from base.utils import remove_subsets, sets_to_sorted_lists
 
 SUITS = ('C', 'D', 'H', 'S')
 
@@ -184,17 +185,9 @@ def any_suit_runs(cards, min_run_size, dedupe=True):
             break
 
     if not dedupe:
-        return [sorted(list(p)) for p in potential]
+        return sets_to_sorted_lists(potential)
 
-    deduped = []
-    for s in potential:
-        subset = False
-        for o in potential:
-            if s.issubset(o) and s is not o:
-                subset = True
-        if not subset:
-            deduped.append(sorted(list(s)))
-    return deduped
+    return sets_to_sorted_lists(remove_subsets(potential))
 
 
 def same_suit_all_runs(cards, min_run_size):
