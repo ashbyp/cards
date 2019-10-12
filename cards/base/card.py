@@ -1,6 +1,6 @@
 import random
 import itertools
-from base.utils import remove_subsets, sets_to_sorted_lists
+from cards.base.utils import remove_subsets, sets_to_sorted_lists
 
 SUITS = ('C', 'D', 'H', 'S')
 
