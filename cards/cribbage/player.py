@@ -213,6 +213,11 @@ def best_peg_card_skip_5s_and_21s_no_runs(stack, hand):
 
 
 def handle_empty_stack(hand, turn_card):
+    # this is too rigid if playing against a good player, but what we are doing is
+    # - if we have a pair in our hand, we play a one if the cards hoping the opponent has one so we can make 3-of-a-kind
+    # - if we have a card matching the turn, we play it reducing changes of being paired by the opponent
+    # - otherwise play our min card
+
     if not hand:
         return None
 
