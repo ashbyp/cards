@@ -20,3 +20,17 @@ def remove_subsets(sets):
 def sets_to_sorted_lists(sets):
     return [sorted(list(s)) for s in sets]
 
+
+def remove_intersecting_sets(sets):
+    removed = []
+    for s in sets:
+        intersect = False
+        for r in removed:
+            if s.intersection(r):
+                intersect = True
+                break
+        if not intersect:
+            removed .append(s)
+    return removed
+
+
