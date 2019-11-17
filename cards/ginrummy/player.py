@@ -1,44 +1,42 @@
 from cards.ginrummy import score
+from cards.base.player import Player
 
 
-class Player:
-    def __init__(self, name):
-        self._name = name
-
-    @property
-    def name(self):
-        return self._name
+class RummyPlayer(Player):
 
     def new_hand(self, hand):
-        # 10 new cards
         raise NotImplementedError()
 
-    def pass_turn(self, stack, face_up_card):
-        # non dealer gets a chance to pass, dealer also gets a chance to pass if the non-dealer passes
+    def dealer_pass(self, face_up_card):
+        # return true to pass or false to take the face up card
         raise NotImplementedError()
 
-    def take_face_up(self, face_up):
-        # return true to take the face up card else false to take the top of the stock pile
+    def non_dealer_pass(self, face_up_card):
+        # return true pass or false to take the face up card
         raise NotImplementedError()
 
-    def next_card_and_discard(self, card):
-        # your next card, return your discard after deciding what to do with the new card.
-        # If None is returned it is assumed you have BIG GIN
+    def take_face_up(self, card):
+        # return true to take the face up card else false and you'll get the stack card
         raise NotImplementedError()
 
-    def knock(self):
+    def next_turn(self, card):
+        # return your discard (or if you have big gin return None)
+        pass
+
+    def ready_to_knock(self):
         # do you want to knock?
+        raise NotImplementedError()
+
+    def opponent_action(self, took_discard, discard):
+        # if your opponent took your last discard, took_discard will be true
         raise NotImplementedError()
 
     def declare_hand(self):
         # declare your hand, which is a list of melds and your dead wood count
         raise NotImplementedError()
 
-    def strategy(self):
-        raise NotImplementedError()
 
-
-class DumbComputerPlayer(Player):
+class DumbComputerPlayer(RummyPlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -52,22 +50,32 @@ class DumbComputerPlayer(Player):
     def new_hand(self, hand):
         self._hand = hand
 
-    def pass_turn(self, stack, face_up_card):
+    def dealer_pass(self, face_up_card):
+        # return true to pass or false to take the face up card
         return False
 
-    def take_face_up(self, face_up):
+    def non_dealer_pass(self, face_up_card):
+        # return true pass or false to take the face up card
         return False
 
-    def next_card_and_discard(self, card):
-        self._hand.append(card)
-        return self._hand.pop(0)
+    def take_face_up(self, card):
+        # return true to take the face up card else false and you'll get the stack card
+        return False
 
-    def knock(self):
-        melds, dead_wood_count = score.score_hand(self._hand)
-        return dead_wood_count <= 10
+    def next_turn(self, card):
+        # return your discard (or if you have big gin return None)
+        return card
+
+    def ready_to_knock(self):
+        # do you want to knock?
+        raise NotImplementedError()
 
     def declare_hand(self):
-        return score.score_hand(self._hand)
+        # declare your hand, which is a list of melds and your dead wood count
+        raise NotImplementedError()
+
+    def opponent_action(self, took_discard, discard):
+        pass
 
     def strategy(self):
         return \

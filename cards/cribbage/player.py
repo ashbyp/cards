@@ -1,25 +1,16 @@
 import random
 import itertools
 from cards.base.card import Card, standard_deck, pairs
+from cards.base.player import Player
 from cards.cribbage import score
 
 
-class Player:
-    def __init__(self, name):
-        self._name = name
-        self._score = 0
-
-    @property
-    def name(self):
-        return self._name
+class CribbagePlayer(Player):
 
     def choose_discards(self, hand, my_box):
         raise NotImplementedError()
 
     def next_pegging_card(self, stack, hand, turn_card):
-        raise NotImplementedError()
-
-    def strategy(self):
         raise NotImplementedError()
 
 
@@ -214,7 +205,7 @@ def best_peg_card_skip_5s_and_21s_no_runs(stack, hand):
 
 def handle_empty_stack(hand, turn_card):
     # this is too rigid if playing against a good player, but what we are doing is
-    # - if we have a pair in our hand, we play a one if the cards hoping the opponent has one so we can make 3-of-a-kind
+    # - if we have a pair in our hand, we play one of the pair hoping the opponent has one so we can make 3-of-a-kind
     # - if we have a card matching the turn, we play it reducing changes of being paired by the opponent
     # - otherwise play our min card
 
@@ -236,7 +227,7 @@ def handle_empty_stack(hand, turn_card):
     return min(hand)
 
 
-class DumbComputerPlayer(Player):
+class DumbComputerPlayer(CribbagePlayer):
     # don't change the stupidity of this player, unit tests need it
     ME_COUNT = 1
 
@@ -261,7 +252,7 @@ class DumbComputerPlayer(Player):
         return "I will discard the first two cards dealt to me, and peg the first legal card in my hand"
 
 
-class RandomComputerPlayer(Player):
+class RandomComputerPlayer(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -286,7 +277,7 @@ class RandomComputerPlayer(Player):
         return "I will discard two random cards, and play a random pegging card"
 
 
-class HumanPlayer(Player):
+class HumanPlayer(CribbagePlayer):
     def __init__(self):
         name = input(' --> What is your name? ')
         super().__init__(name)
@@ -340,7 +331,7 @@ class HumanPlayer(Player):
         return self._strategy
 
 
-class ComputerPlayerV1(Player):
+class ComputerPlayerV1(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -363,7 +354,7 @@ class ComputerPlayerV1(Player):
                " me the best score, or if all equal, then a random card"
 
 
-class ComputerPlayerV2(Player):
+class ComputerPlayerV2(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -387,7 +378,7 @@ class ComputerPlayerV2(Player):
                " of 5 or 21"
 
 
-class ComputerPlayerV3(Player):
+class ComputerPlayerV3(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -411,7 +402,7 @@ class ComputerPlayerV3(Player):
                " of 5 or 21"
 
 
-class ComputerPlayerV4(Player):
+class ComputerPlayerV4(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -437,7 +428,7 @@ class ComputerPlayerV4(Player):
                 " then a random card; and will prefer not to leave a stack count of 5 or 21"
 
 
-class ComputerPlayerV5(Player):
+class ComputerPlayerV5(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -463,7 +454,7 @@ class ComputerPlayerV5(Player):
                 " equal then a random card; and will prefer not to leave a stack count of 5 or 21"
 
 
-class ComputerPlayerV6(Player):
+class ComputerPlayerV6(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):
@@ -490,7 +481,7 @@ class ComputerPlayerV6(Player):
                 " run for my opponent"
 
 
-class ComputerPlayerV7(Player):
+class ComputerPlayerV7(CribbagePlayer):
     ME_COUNT = 1
 
     def __init__(self, name=None):

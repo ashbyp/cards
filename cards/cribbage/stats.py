@@ -1,6 +1,6 @@
 import numpy as np
 from collections import OrderedDict
-from cards.cribbage.player import Player
+from cards.cribbage.player import CribbagePlayer
 
 
 class Collector:
@@ -24,7 +24,7 @@ class Collector:
         self.stats[player.name]['win'] = self.stats[player.name]['win'] + 1
         
     def averages(self, player):
-        player_name = player.name if isinstance(player, Player) else player
+        player_name = player.name if isinstance(player, CribbagePlayer) else player
 
         pegging = self.stats[player_name]['pegging']
         hand = self.stats[player_name]['hand']
