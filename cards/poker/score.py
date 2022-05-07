@@ -44,11 +44,11 @@ def eval_hand(hand):
     flush = all(s == suits[0] for s in suits)
 
     if straight and flush:
-        return 8, values[0] if values[1] != 5 else 5
+        return 8, values[0] if values[0:2] != [14, 5] else 5
     if flush:
         return 5, values
     if straight:
-        return 4, values[0] if values[1] != 5 else values[1]
+        return 4, values[0] if values[0:2] != [14, 5] else values[1]
 
     trips = []
     pairs = []
@@ -65,6 +65,7 @@ def eval_hand(hand):
 
 def score_some_hands():
     data = urlopen('https://projecteuler.net/project/resources/p054_poker.txt')
+    count = 0
     for line in data:
         try:
             cards = Card.from_str_list(line.decode('utf-8').strip(), sep=' ')
@@ -75,8 +76,10 @@ def score_some_hands():
             desc1 = eval_desc(eval1, True)
             desc2 = eval_desc(eval2, True)
             result = "draws with"
+
             if eval1 > eval2:
                 result = 'beats'
+                count += 1
             elif eval1 < eval2:
                 result = 'loses to'
 
@@ -84,6 +87,8 @@ def score_some_hands():
         except ValueError as e:
             print(e, f'input was {line}')
             raise e
+
+    print(f'Player 1 won {count} games')
 
 
 if __name__ == '__main__':
