@@ -1,8 +1,9 @@
 import random
 import timeit
 from unittest import TestCase
-from cards.base.card import Card, standard_deck, split_suits, split_ranks, pairs, three_of_a_kind, four_of_a_kind,\
-        same_suit_all_runs
+
+from cards.base.card import Card, standard_deck, split_suits, split_ranks, pairs, three_of_a_kind, four_of_a_kind, \
+    same_suit_all_runs, hands_equal
 
 
 class TestCard(TestCase):
@@ -82,7 +83,7 @@ class TestCard(TestCase):
             deck.difference(hand)
         set_time_taken = timeit.default_timer() - start_time
 
-        print(f'List {list_time_taken} vs Set {set_time_taken}')
+        #print(f'List {list_time_taken} vs Set {set_time_taken}')
         self.assertTrue(set_time_taken < list_time_taken)
 
     def test_split_suits(self):
@@ -126,4 +127,15 @@ class TestCard(TestCase):
         self.assertTrue(tuple(Card.from_str_list('AS,2S,3S')) in runs)
         self.assertTrue(tuple(Card.from_str_list('2S,3S,4s')) in runs)
 
+    def test_hands_equal(self):
+        self.assertTrue(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c, 3c')))
+        self.assertTrue(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('3c, Ad, 2c')))
+        self.assertFalse(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c')))
 
+        self.assertTrue(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
+                                    Card.from_str_list('3c, Ad, 2c'),
+                                    Card.from_str_list('Ad, 3c, 2c')))
+
+        self.assertFalse(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
+                                     Card.from_str_list('3c, Ad, 2c'),
+                                     Card.from_str_list('Ad, 3c, 2h')))

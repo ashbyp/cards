@@ -1,7 +1,7 @@
 import itertools
 from urllib.request import urlopen
 from cards.base.card import Card
-import numpy as np
+
 
 def eval_desc(result, verbose=False):
 
@@ -95,20 +95,21 @@ def best_hand(cards):
     if len(cards) < 5:
         raise ValueError("Need at least 5 cards")
     if len(cards) == 5:
-        return cards
+        return cards, eval_hand(cards)
 
-    best_score = (0,)
     best_cards = cards[0:5]
+    best_score = (0,)
 
     for h in itertools.combinations(cards, 5):
         s = eval_hand(h)
         if s > best_score:
-            best_score = s
             best_cards = h
-    return best_cards
+            best_score = s
+    return best_cards, best_score
 
 
 if __name__ == '__main__':
-    score_some_hands()
-    print(sorted(best_hand(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))))
+    #score_some_hands()
+    print(best_hand(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
+    print(best_hand(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
 

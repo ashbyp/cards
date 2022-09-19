@@ -36,7 +36,7 @@ class Card:
         # 5C 5c - both 5 clubs
         # JH Jh 11H 11h - all jack of hearts
         if len(card_name) > 3:
-            raise ValueError('invalid format, try one of these formats \'JH Jh 11H 11h\'')
+            raise ValueError(f'"{card_name}" invalid format, try one of these formats \'JH Jh 11H 11h\'')
         card_name = card_name.upper()
         rank_str = card_name[0:2] if len(card_name) == 3 else card_name[0]
         if rank_str in PICTURES:
@@ -233,6 +233,14 @@ def four_of_a_kind(hand):
             if comb[0].rank == comb[1].rank == comb[2].rank == comb[3].rank]
 
 
+def hands_equal(*args):
+    base = set(args[0])
+    for h in args[1:]:
+        if set(h) != base:
+            return False
+    return True
+
+
 if __name__ == '__main__':
     # cards = Card.from_str_list('1D, 2C, 3S')
     # print(is_run(cards))
@@ -241,3 +249,15 @@ if __name__ == '__main__':
     cards = Card.from_str_list('Ad, 2c, 3c')
     print(is_run(cards))
     print(is_run(cards, ace_high=True))
+
+    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c, 3c')))
+    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('3c, Ad, 2c')))
+    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c')))
+
+    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
+                      Card.from_str_list('3c, Ad, 2c'),
+                      Card.from_str_list('Ad, 3c, 2c')))
+
+    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
+                      Card.from_str_list('3c, Ad, 2c'),
+                      Card.from_str_list('Ad, 3c, 2h')))
