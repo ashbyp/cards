@@ -1,5 +1,6 @@
-from cards.base import card
 import itertools
+
+from cards.base import card
 
 
 def runs(hand, turn_card):
@@ -62,7 +63,7 @@ def breakdown_tostring(bd):
                 s += '\n'
             s += '%-9s: %s' % (score_type.capitalize(),
                                ', '.join(map(str, map(lambda x: sorted(x)
-                                    if isinstance(x, list) else x, (bd[score_type])))))
+                               if isinstance(x, list) else x, (bd[score_type])))))
     return s
 
 
@@ -103,5 +104,3 @@ def score_pegging_stack(stack):
                 return run_length, f'run of {run_length}'
 
     return 0, None
-
-

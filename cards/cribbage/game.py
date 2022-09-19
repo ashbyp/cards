@@ -28,7 +28,6 @@ class Game:
                 player2_card = deck.random_card()
 
                 self._trace(f'{self._player1.name} cut {player1_card}, {self._player2.name} cut {player2_card}')
-
                 if player1_card.rank < player2_card.rank:
                     return self._player1, self._player2, player1_card, player2_card
                 elif player2_card.rank < player1_card.rank:
@@ -170,7 +169,7 @@ class Game:
         deck.shuffle()
         dealer, non_dealer, dealer_card, non_dealer_card = self.decide_dealer(deck)
 
-        self._display.cut(dealer, dealer_card, non_dealer, non_dealer_card )
+        self._display.cut(dealer, dealer_card, non_dealer, non_dealer_card)
 
         while True:
             try:

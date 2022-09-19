@@ -50,10 +50,10 @@ class TestCard(TestCase):
         self.assertTrue((Card.from_str_list('2c, 2d, 2s'), Card.from_str_list('3c, 3d, 3s')) in subsets)
 
     def test_remove_subsets(self):
-        sets = [set([1, 2, 3]), set([1, 2, 3, 4])]
+        sets = [{1, 2, 3}, {1, 2, 3, 4}]
         removed = remove_subsets(sets)
         self.assertEqual(1, len(removed))
-        self.assertEqual(set([1, 2, 3, 4]), removed[0])
+        self.assertEqual({1, 2, 3, 4}, removed[0])
 
     def test_remove_subsets_cards(self):
         sets = [set(Card.from_str_list('2c, 3c, 4c')), set(Card.from_str_list('2c, 3c, 4c, 5c'))]
@@ -62,7 +62,7 @@ class TestCard(TestCase):
         self.assertEqual(set(Card.from_str_list('2c, 3c, 4c, 5c')), removed[0])
 
     def test_sets_to_sorted_list(self):
-        sets = [set([3, 2, 1]), set([4, 3, 2, 1])]
+        sets = [{3, 2, 1}, {4, 3, 2, 1}]
         lists = sets_to_sorted_lists(sets)
         self.assertEqual([[1, 2, 3], [1, 2, 3, 4]], lists)
 
@@ -72,15 +72,15 @@ class TestCard(TestCase):
         self.assertEqual([Card.from_str_list('2c, 3c, 4c'), Card.from_str_list('2c, 3c, 4c, 5c')], lists)
 
     def test_remove_intersecting_sets(self):
-        sets = [set([1, 2]), set([3, 4])]
+        sets = [{1, 2}, {3, 4}]
         removed = remove_intersecting_sets(sets)
         self.assertEqual(2, len(removed))
 
-        sets = [set([1, 2]), set([1, 4])]
+        sets = [{1, 2}, {1, 4}]
         removed = remove_intersecting_sets(sets)
         self.assertEqual(1, len(removed))
 
-        sets = [set([1, 2]), set([1, 4]), set([5, 6])]
+        sets = [{1, 2}, {1, 4}, {5, 6}]
         removed = remove_intersecting_sets(sets)
         self.assertEqual(2, len(removed))
 

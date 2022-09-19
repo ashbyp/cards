@@ -53,7 +53,7 @@ class TestScore(TestCase):
         self.assertTrue(tuple(Card.from_str_list('2c,3c,4c')) in all_melds)
         self.assertTrue(tuple(Card.from_str_list('4c,4d,4h')) in all_melds)
 
-    def test_find_melds_run_and_four_of_a_kind(self):
+    def test_find_melds_run_and_four_of_a_kind1(self):
         hand = Card.from_str_list('2c,3c,4c,4d,4h,4s,8c,9s,10d,jh')
         all_melds = set(tuple(x) for x in score.find_all_melds(hand))
         self.assertEqual(6, len(all_melds))
