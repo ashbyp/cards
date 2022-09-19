@@ -8,17 +8,24 @@ def eval_desc(result, verbose=False):
     value_dict = {11: 'Jack', 12: 'Queen', 13: 'King', 14: 'Ace'}
 
     res_code = {
-        8: ('Straight Flush', lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
-        7: ('Four of a Kind', lambda x: f'{value_dict.get(x[1], str(x[1]))}\'s'),
+        8: ('Straight Flush',
+            lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
+        7: ('Four of a Kind',
+            lambda x: f'{value_dict.get(x[1], str(x[1]))}\'s'),
         6: ('Full House',
             lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s over {value_dict.get(x[2][0], str(x[2][0]))}\'s'),
-        5: ('Flush', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))} high'),
-        4: ('Straight', lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
-        3: ('Three of a Kind', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
+        5: ('Flush',
+            lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))} high'),
+        4: ('Straight',
+            lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
+        3: ('Three of a Kind',
+            lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
         2: ('Two pair',
             lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s and {value_dict.get(x[1][1], str(x[1][1]))}\'s'),
-        1: ('One pair', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
-        0: ('High card', lambda x: f'{value_dict.get(x[2][0], str(x[2][0]))}'),
+        1: ('One pair',
+            lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
+        0: ('High card',
+            lambda x: f'{value_dict.get(x[2][0], str(x[2][0]))}'),
     }
     return res_code[result[0]][0] if not verbose else f'{res_code[result[0]][0]} ({res_code[result[0]][1](result)})'
 
@@ -96,7 +103,7 @@ def score_some_hands():
     print(f'Player 1 won {count} games')
 
 
-def best_hand(cards):
+def best_five_cards(cards):
     if len(cards) < 5:
         raise ValueError("Need at least 5 cards")
     if len(cards) == 5:
@@ -113,7 +120,29 @@ def best_hand(cards):
     return best_cards, best_score
 
 
+def winning_hand(board, hands):
+    if len(board) != 5:
+        raise ValueError('Need full board to find winning hand')
+    if len(hands) == 0:
+        raise(ValueError('No hands given'))
+
+    _, best_score = best_five_cards(board + hands[0])
+    winning_hands = [hands[0]]
+    winning_scores = [best_score]
+
+    for hand in hands[1:]:
+        _, best_score = best_five_cards(board + hand)
+        if best_score > winning_scores[0]:
+            winning_hands = [hand]
+            winning_scores = [best_score]
+        elif best_score == winning_scores[0]:
+            winning_hands.append(hand)
+            winning_scores.append(best_score)
+
+    return winning_hands, winning_scores
+
+
 if __name__ == '__main__':
-    # score_some_hands()
-    print(best_hand(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
-    print(best_hand(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
+    score_some_hands()
+    print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
+    print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
