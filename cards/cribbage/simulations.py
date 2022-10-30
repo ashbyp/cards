@@ -32,7 +32,7 @@ class TargetScoreSimulation(Simulator):
         attempts = 1
         while True:
             deck.shuffle()
-            h = deck.deal_one(4)
+            h = deck.deal_hand(4)
             t = deck.next_card()
             hs = score.score_hand(h, t)
             deck.return_cards(h)
@@ -51,7 +51,7 @@ class TargetScoreSimulation(Simulator):
         attempts = 1
         while True:
             deck.shuffle()
-            h = deck.deal_one(6)
+            h = deck.deal_hand(6)
             sh = best_hand_ignore_box(h, 4)
             t = deck.next_card()
             hs = score.score_hand(sh[0][1], t)
