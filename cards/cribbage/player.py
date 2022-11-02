@@ -263,7 +263,7 @@ class ComputerPlayerV3(ComputerPlayerV2):
             super().__init__(name)
 
     def choose_discards(self, hand, my_box):
-        best = score.choose_best_hand(hand, 4, my_box)[0][1]
+        best = choose_best_hand(hand, 4, my_box)[0][1]
         return [x for x in hand if x not in best]
 
     def strategy(self):
