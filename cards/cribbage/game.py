@@ -202,9 +202,9 @@ class Game:
             except GameWonException as gwe:
                 self._trace(gwe)
                 self._display.announce_win(board)
-                break
+                return gwe.winning_player
 
 
 if __name__ == '__main__':
     game = Game(DumbComputerPlayer(), DumbComputerPlayer(), 121, trace_enabled=True)
-    game.play()
+    print(f'Winner is {game.play().name}')

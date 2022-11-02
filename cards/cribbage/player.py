@@ -363,7 +363,7 @@ class ComputerPlayerV3(Player):
     def __init__(self, name=None):
         if not name:
             super().__init__(f'CompV3_{ComputerPlayerV3.ME_COUNT}')
-            ComputerPlayerV2.ME_COUNT += 1
+            ComputerPlayerV3.ME_COUNT += 1
         else:
             super().__init__(name)
 
@@ -413,7 +413,7 @@ class ComputerPlayerV5(Player):
     def __init__(self, name=None):
         if not name:
             super().__init__(f'CompV5_{ComputerPlayerV5.ME_COUNT}')
-            ComputerPlayerV4.ME_COUNT += 1
+            ComputerPlayerV5.ME_COUNT += 1
         else:
             super().__init__(name)
 
@@ -439,7 +439,7 @@ class ComputerPlayerV6(Player):
     def __init__(self, name=None):
         if not name:
             super().__init__(f'CompV6_{ComputerPlayerV6.ME_COUNT}')
-            ComputerPlayerV4.ME_COUNT += 1
+            ComputerPlayerV6.ME_COUNT += 1
         else:
             super().__init__(name)
 
