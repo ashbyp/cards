@@ -1,4 +1,3 @@
-from cards.ginrummy import score
 from cards.base.player import Player
 
 

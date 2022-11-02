@@ -107,8 +107,8 @@ class Card:
 
 
 class Deck:
-    def __init__(self, cards=None, shuffle=False):
-        self._cards = standard_deck() if not cards else cards
+    def __init__(self, non_standard_cards=None, shuffle=False):
+        self._cards = standard_deck() if not non_standard_cards else non_standard_cards
         if shuffle:
             self.shuffle()
 
@@ -150,21 +150,21 @@ def standard_deck():
     return [Card(r, s) for r in range(1, 14) for s in SUITS]
 
 
-def split_suits(cards):
-    return {suit: sorted([c for c in cards if c.suit == suit]) for suit in SUITS}
+def split_suits(hand):
+    return {suit: sorted([c for c in hand if c.suit == suit]) for suit in SUITS}
 
 
-def split_ranks(cards):
+def split_ranks(hand):
     split = {}
-    for c in cards:
+    for c in hand:
         split[c.rank] = split.get(c.rank, [])
         split[c.rank].append(c)
     return split
 
 
-def same_suit_runs(cards, min_run_size):
+def same_suit_runs(hand, min_run_size):
     results = []
-    for suit, cards_for_suit in split_suits(cards).items():
+    for suit, cards_for_suit in split_suits(hand).items():
         run_for_suit = []
         for c in cards_for_suit:
             if len(run_for_suit) == 0 or run_for_suit[len(run_for_suit) - 1].rank == c.rank - 1:
@@ -174,23 +174,23 @@ def same_suit_runs(cards, min_run_size):
     return results
 
 
-def is_run(cards, ace_high=False):
-    cards = sorted(cards)
-    if ace_high and cards[0].rank == 1:
-        cards.append(cards.pop(0))
+def is_run(hand, ace_high=False):
+    hand = sorted(hand)
+    if ace_high and hand[0].rank == 1:
+        hand.append(hand.pop(0))
 
-    for i in range(0, len(cards) - 1):
-        if not cards[i].is_next_rank(cards[i+1], ace_high):
+    for i in range(0, len(hand) - 1):
+        if not hand[i].is_next_rank(hand[i + 1], ace_high):
             return False
     return True
 
 
-def any_suit_runs(cards, min_run_size, dedupe=True, ace_high=False):
+def any_suit_runs(hand, min_run_size, remove_duplicates=True, ace_high=False):
     potential = []
 
-    for i in range(min_run_size, len(cards) + 1):
+    for i in range(min_run_size, len(hand) + 1):
         found_run_at_len_i = False
-        for comb in itertools.combinations(cards, i):
+        for comb in itertools.combinations(hand, i):
             if is_run(comb, ace_high):
                 potential.append(set(comb))
                 found_run_at_len_i = True
@@ -198,14 +198,14 @@ def any_suit_runs(cards, min_run_size, dedupe=True, ace_high=False):
             # no point checking longer runs if we didn't find any or the shorter ones
             break
 
-    if not dedupe:
+    if not remove_duplicates:
         return sets_to_sorted_lists(potential)
 
     return sets_to_sorted_lists(remove_subsets(potential))
 
 
-def same_suit_all_runs(cards, min_run_size):
-    split = split_suits(cards)
+def same_suit_all_runs(hand, min_run_size):
+    split = split_suits(hand)
     all_runs = []
     for same_suit in split.values():
         runs = any_suit_runs(same_suit, min_run_size, False)
@@ -214,8 +214,8 @@ def same_suit_all_runs(cards, min_run_size):
     return all_runs
 
 
-def flushes(cards, min_flush_size):
-    return [c for c in split_suits(cards).values() if len(c) >= min_flush_size]
+def flushes(hand, min_flush_size):
+    return [c for c in split_suits(hand).values() if len(c) >= min_flush_size]
 
 
 def pairs(hand):

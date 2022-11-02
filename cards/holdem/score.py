@@ -1,20 +1,22 @@
 import itertools
 from urllib.request import urlopen
+
 from cards.base.card import Card
 
 
 def eval_desc(result, verbose=False):
-
     value_dict = {11: 'Jack', 12: 'Queen', 13: 'King', 14: 'Ace'}
 
     res_code = {
         8: ('Straight Flush', lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
         7: ('Four of a Kind', lambda x: f'{value_dict.get(x[1], str(x[1]))}\'s'),
-        6: ('Full House', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s over {value_dict.get(x[2][0], str(x[2][0]))}\'s'),
+        6: ('Full House',
+            lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s over {value_dict.get(x[2][0], str(x[2][0]))}\'s'),
         5: ('Flush', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))} high'),
         4: ('Straight', lambda x: f'{value_dict.get(x[1], str(x[1]))} high'),
         3: ('Three of a Kind', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
-        2: ('Two pair', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s and {value_dict.get(x[1][1], str(x[1][1]))}\'s'),
+        2: ('Two pair',
+            lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s and {value_dict.get(x[1][1], str(x[1][1]))}\'s'),
         1: ('One pair', lambda x: f'{value_dict.get(x[1][0], str(x[1][0]))}\'s'),
         0: ('High card', lambda x: f'{value_dict.get(x[2][0], str(x[2][0]))}'),
     }
@@ -39,7 +41,7 @@ def eval_hand(hand):
 
     values = sorted([c.rank if c.rank != 1 else 14 for c in hand], reverse=True)
     suits = [c.suit for c in hand]
-    straight = (values == list(range(values[0], values[0]-5, -1))
+    straight = (values == list(range(values[0], values[0] - 5, -1))
                 or values == [14, 5, 4, 3, 2])
     flush = all(s == suits[0] for s in suits)
 
@@ -54,9 +56,12 @@ def eval_hand(hand):
     pairs = []
     for v, group in itertools.groupby(values):
         count = sum(1 for _ in group)
-        if count == 4: return 7, v, values
-        elif count == 3: trips.append(v)
-        elif count == 2: pairs.append(v)
+        if count == 4:
+            return 7, v, values
+        elif count == 3:
+            trips.append(v)
+        elif count == 2:
+            pairs.append(v)
 
     if trips:
         return (6 if pairs else 3), trips, pairs, values
@@ -109,7 +114,6 @@ def best_hand(cards):
 
 
 if __name__ == '__main__':
-    #score_some_hands()
+    # score_some_hands()
     print(best_hand(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
     print(best_hand(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
-
