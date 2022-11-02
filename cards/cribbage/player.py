@@ -100,8 +100,10 @@ def best_peg_card(stack, hand):
     stack_score = sum([x.value for x in stack])
     score_per_card = []
     for card in hand:
-        if stack_score + card.value <= 31:
-            score_per_card.append(score.score_pegging_stack(stack + [card])[0])
+        new_stack_score = stack_score + card.value
+        bonus = 2 if new_stack_score in (15, 31) else 0
+        if new_stack_score <= 31:
+            score_per_card.append(bonus + score.score_pegging_stack(stack + [card])[0])
         else:
             score_per_card.append(None)
 
@@ -121,8 +123,10 @@ def best_peg_cards_skip_5s_and_21s(stack, hand):
     stack_score = sum([x.value for x in stack])
     score_per_card = []  # tuples (score, stack_score)
     for card in hand:
-        if stack_score + card.value <= 31:
-            score_per_card.append((score.score_pegging_stack(stack + [card])[0], stack_score + card.value))
+        new_stack_score = stack_score + card.value
+        bonus = 2 if new_stack_score in (15, 31) else 0
+        if new_stack_score <= 31:
+            score_per_card.append((bonus + score.score_pegging_stack(stack + [card])[0], stack_score + card.value))
         else:
             score_per_card.append((None, None))
 
@@ -151,8 +155,10 @@ def best_peg_cards_skip_5s_and_21s_no_runs(stack, hand):
     stack_score = sum([x.value for x in stack])
     score_per_card = []  # tuples (score, stack_score)
     for card in hand:
-        if stack_score + card.value <= 31:
-            score_per_card.append((score.score_pegging_stack(stack + [card])[0], stack_score + card.value))
+        new_stack_score = stack_score + card.value
+        bonus = 2 if new_stack_score in (15, 31) else 0
+        if new_stack_score <= 31:
+            score_per_card.append((bonus + score.score_pegging_stack(stack + [card])[0], stack_score + card.value))
         else:
             score_per_card.append((None, None))
 
@@ -466,4 +472,4 @@ class ComputerPlayerV6(Player):
 if __name__ == '__main__':
     p = ComputerPlayerV5()
     print(p.choose_discards(Card.from_str_list('ad,2d,3d,4d,6h,6d'), False))
-    print(p.choose_discards(Card.from_str_list('ad,2d,3d,4d,5d,6d'), True))
+    print(p.choose_discards(Card.from_str_list('ad,2d,3d,4d,6h,6d'), True))

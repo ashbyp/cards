@@ -49,6 +49,8 @@ class Card:
 
     @staticmethod
     def from_str_list(card_names):
+        if not card_names:
+            return []
         return [Card.from_str(name) for name in card_names.replace(' ', '').split(',')]
 
     @property
