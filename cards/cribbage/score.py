@@ -105,26 +105,3 @@ def score_pegging_stack(stack):
     return 0, None
 
 
-def run_some_hands(num):
-    deck = card.Deck()
-    for _ in range(num):
-        deck.shuffle()
-        print('*' * 70)
-        hands = deck.deal(1, 4)
-        turn_card = deck.next_card()
-
-        print(f'Hand:        {hands[0]}')
-        print(f'Turn:        {turn_card}')
-        print(f' Runs:       {runs(hands[0], turn_card)}')
-        print(f' Flushes:    {flushes(hands[0], turn_card)}')
-        print(f' 15s:        {fifteens(hands[0], turn_card)}')
-        print(f' Pairs:      {pairs(hands[0], turn_card)}')
-        print(f' Nob  :      {nob(hands[0], turn_card)}')
-        print(f' Score:      {score_hand(hands[0], turn_card)}')
-        deck.return_cards(*hands)
-        deck.return_cards([turn_card])
-        print(f'Card remaining: {deck.cards_remaining()}')
-
-
-if __name__ == '__main__':
-    run_some_hands(100)
