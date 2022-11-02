@@ -1,13 +1,15 @@
 import numpy as np
+from collections import OrderedDict
 from cards.cribbage.player import Player
+
 
 class Collector:
 
     def __init__(self, p1, p2):
-        self.stats = {
+        self.stats = OrderedDict({
             p1.name: {'pegging': [], 'hand': [], 'box': []},
             p2.name: {'pegging': [], 'hand': [], 'box': []},
-        }
+        })
 
     def add_pegging_score(self, player, score):
         self.stats[player.name]['pegging'].append(score)
@@ -30,6 +32,9 @@ class Collector:
         avg_box = np.mean(box) if box else 0
 
         return avg_peg, avg_hand, avg_box
+
+    def rating(self, player):
+        return sum(self.averages(player))
 
     def _averages_tostring(self, player_name):
         averages = self.averages(player_name)
