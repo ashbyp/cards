@@ -1,7 +1,8 @@
 import random
 import timeit
 from unittest import TestCase
-from cards.base.card import Card, standard_deck, split_suits, split_ranks, pairs, three_of_a_kind, four_of_a_kind
+from cards.base.card import Card, standard_deck, split_suits, split_ranks, pairs, three_of_a_kind, four_of_a_kind,\
+        same_suit_all_runs
 
 
 class TestCard(TestCase):
@@ -106,5 +107,23 @@ class TestCard(TestCase):
         self.assertEqual(5, len(three_of_a_kind(cards)))
         self.assertEqual(1, len(four_of_a_kind(cards)))
 
+    def test_same_suit_all_runs(self):
+        cards = Card.from_str_list('AS,2C,3C')
+        self.assertFalse(same_suit_all_runs(cards, 3))
+        cards = Card.from_str_list('AS,2S,3S')
+        runs = same_suit_all_runs(cards, 3)
+        self.assertEqual(1, len(runs))
+        self.assertEqual([Card.from_str_list('AS,2S,3S')], runs)
+        cards = Card.from_str_list('AS,2S,3S,6c,7c,8c')
+        runs = set(tuple(r) for r in same_suit_all_runs(cards, 3))
+        self.assertEqual(2, len(runs))
+        self.assertTrue(tuple(Card.from_str_list('AS,2S,3S')) in runs)
+        self.assertTrue(tuple(Card.from_str_list('6c,7c,8c')) in runs)
+        cards = Card.from_str_list('AS,2S,3S,4s')
+        runs = set(tuple(r) for r in same_suit_all_runs(cards, 3))
+        self.assertEqual(3, len(runs))
+        self.assertTrue(tuple(Card.from_str_list('AS,2S,3S,4s')) in runs)
+        self.assertTrue(tuple(Card.from_str_list('AS,2S,3S')) in runs)
+        self.assertTrue(tuple(Card.from_str_list('2S,3S,4s')) in runs)
 
 
