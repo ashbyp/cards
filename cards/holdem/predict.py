@@ -26,7 +26,7 @@ def winning_chance(deck, initial_board, hands, debug=1):
             tally[tuple(winner)] += 1 / len(winners)
 
         count += 1
-        if debug > 0 and count % 10000 == 0:
+        if debug > 0 and count % 20000 == 0:
             print(count)
             #return [(tally[tuple(h)] / count) * 100 for h in hands]
 
@@ -38,7 +38,7 @@ def winning_chance(deck, initial_board, hands, debug=1):
 
 def run_sim(decks, num_cards_known):
     for s, deck in enumerate(decks):
-        hands = deck.deal(2, num_cards_known)
+        hands = deck.deal_hands(2, num_cards_known)
 
         p1_win_or_draw = 0
         p2_win_or_draw = 0
@@ -77,22 +77,22 @@ run_river_sim = functools.partial(run_sims, 'River', 4)
 
 
 def test_stuff():
-    deck = Deck(shuffle=True)
-    hands = deck.deal(2, 2)
-    board = deck.deal_one(4)
-    print(f'HANDS:   {hands}')
-    print(f'BOARD:   {board}')
-    print(f'CHANCES: {winning_chance(deck, board, hands)}')
+    # deck = Deck(shuffle=True)
+    # hands = deck.deal_hands(num_players=2, cards_per_hand=2)
+    # board = deck.deal_hand(4)
+    # print(f'HANDS:   {hands}')
+    # print(f'BOARD:   {board}')
+    # print(f'CHANCES: {winning_chance(deck, board, hands)}')
 
+    # deck = Deck(shuffle=True)
+    # hands = deck.deal_hands(num_players=2, cards_per_hand=2)
+    # board = deck.deal_hand(3)
+    # print(f'HANDS:   {hands}')
+    # print(f'BOARD:   {board}')
+    # print(f'CHANCES: {winning_chance(deck, board, hands)}')
+    #
     deck = Deck(shuffle=True)
-    hands = deck.deal(2, 2)
-    board = deck.deal_one(3)
-    print(f'HANDS:   {hands}')
-    print(f'BOARD:   {board}')
-    print(f'CHANCES: {winning_chance(deck, board, hands)}')
-
-    deck = Deck(shuffle=True)
-    hands = deck.deal(2, 2)
+    hands = deck.deal_hands(num_players=9, cards_per_hand=2)
     board = []
     print(f'HANDS:   {hands}')
     print(f'BOARD:   {board}')

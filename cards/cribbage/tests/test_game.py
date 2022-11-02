@@ -22,7 +22,7 @@ class TestGame(TestCase):
 
     def test_discard(self):
         deck = card.Deck()
-        hands = deck.deal(2, 6)
+        hands = deck.deal_hands(2, 6)
         dealer_hand, non_dealer_hand, box = self._game.discard(self._p1, self._p2, hands[0], hands[1])
         self.assertEqual(4, len(dealer_hand))
         self.assertEqual(4, len(non_dealer_hand))

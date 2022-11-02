@@ -173,7 +173,7 @@ class Game:
 
         while True:
             try:
-                dealer_hand, non_dealer_hand = map(sorted, deck.deal(2, 6))
+                dealer_hand, non_dealer_hand = map(sorted, deck.deal_hands(2, 6))
 
                 self._trace(f'{dealer.name} has been dealt {dealer_hand}')
                 self._trace(f'{non_dealer.name} has been dealt {non_dealer_hand}')

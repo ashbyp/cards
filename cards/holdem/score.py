@@ -63,6 +63,7 @@ def eval_hand(hand):
     pairs = []
     for v, group in itertools.groupby(values):
         count = sum(1 for _ in group)
+        #count = len(group)
         if count == 4:
             return 7, v, values
         elif count == 3:

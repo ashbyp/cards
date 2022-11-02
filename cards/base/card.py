@@ -115,21 +115,21 @@ class Deck:
     def shuffle(self):
         random.shuffle(self._cards)
 
-    def deal(self, num_players, cards_per_hand):
+    def deal_hands(self, num_players, cards_per_hand):
         dealt = [[] for _ in range(num_players)]
         for i in range(cards_per_hand):
             for j in range(num_players):
                 dealt[j].append(self._cards.pop())
         return dealt
 
-    def deal_one(self, num_cards):
+    def deal_hand(self, num_cards):
         return [self._cards.pop() for _ in range(num_cards)]
 
     def cards_remaining(self):
         return len(self._cards)
 
     def next_card(self):
-        return self._cards.pop(0)
+        return self._cards.pop()
 
     def random_card(self):
         card = random.choice(self._cards)
@@ -137,13 +137,18 @@ class Deck:
         return card
 
     def return_card(self, returned):
-        self._cards.append(returned)
+        self._cards.insert(0, returned)
 
     def return_cards(self, returned):
-        self._cards.extend(returned)
+        self._cards = returned + self._cards
 
     def combinations_remaining(self, size):
         return itertools.combinations(self._cards, size)
+
+    def print(self):
+        for card in self._cards:
+            print(card, end=' ')
+        print()
 
 
 def standard_deck():
@@ -242,22 +247,12 @@ def hands_equal(*hands):
 
 
 if __name__ == '__main__':
-    # cards = Card.from_str_list('1D, 2C, 3S')
-    # print(is_run(cards))
-    # cards = Card.from_str_list('JD, QC, KS')
-    # print(is_run(cards))
-    cards = Card.from_str_list('Ad, 2c, 3c')
-    print(is_run(cards))
-    print(is_run(cards, ace_high=True))
-
-    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c, 3c')))
-    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('3c, Ad, 2c')))
-    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'), Card.from_str_list('Ad, 2c')))
-
-    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
-                      Card.from_str_list('3c, Ad, 2c'),
-                      Card.from_str_list('Ad, 3c, 2c')))
-
-    print(hands_equal(Card.from_str_list('Ad, 2c, 3c'),
-                      Card.from_str_list('3c, Ad, 2c'),
-                      Card.from_str_list('Ad, 3c, 2h')))
+    cards = standard_deck()[:10]
+    deck = Deck(non_standard_cards=cards)
+    deck.print()
+    deck.shuffle()
+    deck.print()
+    print(deck.deal_hands(2, 2))
+    deck.print()
+    print(deck.next_card())
+    deck.print()
