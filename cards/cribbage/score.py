@@ -21,15 +21,13 @@ def flushes(hand, turn_card, is_box):
 
 
 def fifteens(hand, turn_card):
+    hand = hand + [turn_card] if turn_card else hand
     results = []
 
-    def find(num_cards):
-        for comb in itertools.combinations(hand + [turn_card] if turn_card else hand, num_cards):
+    for i in range(2, len(hand) + 1):
+        for comb in itertools.combinations(hand, i):
             if sum(c.value for c in comb) == 15:
                 results.append(list(comb))
-
-    for i in range(2, len(hand) + 2):
-        find(i)
     return results
 
 

@@ -1,4 +1,5 @@
 import random
+import timeit
 from unittest import TestCase
 from cards.base.card import Card, standard_deck
 
@@ -59,5 +60,24 @@ class TestCard(TestCase):
         cards = sorted(cards)
         self.assertEqual(Card.from_str_list('AC,AD,AH,AS,2C,2D,2H,2S'), cards[0:8])
 
+    def test_card_diff_speed(self):
+        deck = set(standard_deck())
+        hand = set(Card.from_str_list('2d,3c,4s,5h'))
 
+        x1 = set([x for x in deck if x not in hand])
+        x2 = set(deck).difference(hand)
 
+        self.assertEqual(x1, x2)
+
+        start_time = timeit.default_timer()
+        for _ in range(1000):
+            [x for x in deck if x not in hand]
+        list_time_taken = timeit.default_timer() - start_time
+
+        start_time = timeit.default_timer()
+        for _ in range(1000):
+            deck.difference(hand)
+        set_time_taken = timeit.default_timer() - start_time
+
+        print(f'List {list_time_taken} vs Set {set_time_taken}')
+        self.assertTrue(set_time_taken < list_time_taken)

@@ -141,9 +141,19 @@ class PlayerComparisonSimulator(Simulator):
             self._run_for_player(player, num_sims, games_per_sim)
 
 
+def profile_player(player):
+    global sim
+    sim = PlayerPerformanceSimulator(player)
+    import cProfile
+    cProfile.run('sim.run(100)')
+
+
 if __name__ == '__main__':
     sim = PlayerComparisonSimulator()
     sim.run()
+
+    # profile_player(ComputerPlayerV6())
+
 
 
 
