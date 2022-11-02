@@ -10,7 +10,7 @@ from cards.cribbage.stats import Collector
 from cards.cribbage.game import Game
 from cards.cribbage.display import Display
 from cards.cribbage.player import best_hand_ignore_box, RandomComputerPlayer, ComputerPlayerV1, ComputerPlayerV2, \
-    ComputerPlayerV3, ComputerPlayerV4, ComputerPlayerV5, ComputerPlayerV6
+    ComputerPlayerV3, ComputerPlayerV4, ComputerPlayerV5, ComputerPlayerV6, ComputerPlayerV7
 
 
 class Simulator:
@@ -134,9 +134,10 @@ class PlayerComparisonSimulator(Simulator):
         print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Adv :: {advantage:.3f} :: Time {time_taken:.1f}')
         self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
 
-    def run(self, num_sims=5, games_per_sim=300):
+    def run(self, num_sims=3, games_per_sim=300):
         players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
-                   ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6()]
+                   ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6(),
+                   ComputerPlayerV7()]
         for player in players:
             self._run_for_player(player, num_sims, games_per_sim)
 
@@ -149,10 +150,10 @@ def profile_player(player):
 
 
 if __name__ == '__main__':
-    # sim = PlayerComparisonSimulator()
-    # sim.run()
+    sim = PlayerComparisonSimulator()
+    sim.run()
 
-    profile_player(ComputerPlayerV6())
+    # profile_player(ComputerPlayerV6())
 
 
 
