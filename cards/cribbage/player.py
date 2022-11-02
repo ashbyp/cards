@@ -261,7 +261,7 @@ class RandomComputerPlayer(Player):
 
     def __init__(self, name=None):
         if not name:
-            super().__init__(f'Random_{DumbComputerPlayer.ME_COUNT}')
+            super().__init__(f'Random_{RandomComputerPlayer.ME_COUNT}')
             RandomComputerPlayer.ME_COUNT += 1
         else:
             super().__init__(name)
@@ -281,7 +281,7 @@ class RandomComputerPlayer(Player):
         return "I will discard two random cards, and play a random pegging card"
 
 
-class HumanPlayer(DumbComputerPlayer):  # for now
+class HumanPlayer(Player):
     def __init__(self):
         name = input(' --> What is your name? ')
         super().__init__(name)
