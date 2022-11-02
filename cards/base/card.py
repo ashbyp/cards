@@ -5,6 +5,7 @@ from cards.base.utils import remove_subsets, sets_to_sorted_lists
 SUITS = ('C', 'D', 'H', 'S')
 
 PICTURES = {
+    'T': 10,
     'J': 11,
     'Q': 12,
     'K': 13,
@@ -49,10 +50,12 @@ class Card:
         return Card(rank, suit_name)
 
     @staticmethod
-    def from_str_list(card_names):
+    def from_str_list(card_names, sep=','):
         if not card_names:
             return []
-        return [Card.from_str(name) for name in card_names.replace(' ', '').split(',')]
+        if sep == ',':
+            card_names = card_names.replace(' ', '')
+        return [Card.from_str(name) for name in card_names.split(sep)]
 
     @property
     def suit(self):
@@ -65,6 +68,9 @@ class Card:
     @property
     def value(self):
         return self._value
+
+    def is_next_rank(self, other, ace_high=False):
+        return (ace_high and (other.rank == 1 and self.rank == 13)) or (other.rank - self.rank == 1)
 
     def str_rank(self):
         return RANK_TO_PICTURES.get(self._rank, str(self._rank))
@@ -163,21 +169,25 @@ def same_suit_runs(cards, min_run_size):
     return results
 
 
-def is_run(cards):
+def is_run(cards, ace_high=False):
     cards = sorted(cards)
+    if ace_high and cards[0].rank == 1:
+        cards.append(cards.pop(0))
+
     for i in range(0, len(cards) - 1):
-        if cards[i].rank != cards[i+1].rank - 1:
+        if not cards[i].is_next_rank(cards[i+1], ace_high):
+        #if cards[i].rank != cards[i+1].rank - 1:
             return False
     return True
 
 
-def any_suit_runs(cards, min_run_size, dedupe=True):
+def any_suit_runs(cards, min_run_size, dedupe=True, ace_high=False):
     potential = []
 
     for i in range(min_run_size, len(cards) + 1):
         found_run_at_len_i = False
         for comb in itertools.combinations(cards, i):
-            if is_run(comb):
+            if is_run(comb, ace_high):
                 potential.append(set(comb))
                 found_run_at_len_i = True
         if not found_run_at_len_i:
@@ -220,4 +230,10 @@ def four_of_a_kind(hand):
 
 
 if __name__ == '__main__':
-    print(any_suit_runs(Card.from_str_list('3D, AC, 5S, 10c, Jc, Qc'), 3))
+    # cards = Card.from_str_list('1D, 2C, 3S')
+    # print(is_run(cards))
+    # cards = Card.from_str_list('JD, QC, KS')
+    # print(is_run(cards))
+    cards = Card.from_str_list('Ad, 2c, 3c')
+    print(is_run(cards))
+    print(is_run(cards, ace_high=True))
