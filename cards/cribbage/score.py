@@ -108,22 +108,6 @@ def score_pegging_stack(stack):
     return 0, None
 
 
-def choose_best_hand(hand, hand_size):
-    best = []
-
-    for comb in itertools.combinations(hand, hand_size):
-        comb = list(comb)
-        score = score_hand(comb, None)
-        if not best:
-            best = [(score, comb)]
-        elif score > best[0][0]:
-            best = [(score, comb)]
-        elif score == best[0][0]:
-            best.append((score, comb))
-
-    return best
-
-
 def run_some_hands(num):
     deck = card.Deck()
     for _ in range(num):

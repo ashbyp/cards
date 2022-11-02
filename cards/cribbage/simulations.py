@@ -94,16 +94,19 @@ class TargetScoreSimulation(Simulator):
 
 class PlayerPerformanceSimulator(Simulator):
 
-    def __init__(self, player1, player2=RandomComputerPlayer()):
+    def __init__(self, player1, player2=RandomComputerPlayer(), keep_alive=False):
         self._player1 = player1
         self._player2 = player2
+        self._keep_alive = keep_alive
 
     def run(self, num_games):
         display = Display(False)
         collector = Collector(self._player1, self._player2)
         game = Game(self._player1, self._player2, stats=collector, display=display)
 
-        for _ in range(num_games):
+        for i in range(num_games):
+            if self._keep_alive and not (i % 50):
+                print('.', end='', flush=True)
             game.play()
 
         self.record_results(self.__class__.__name__, num_games, collector)
@@ -111,6 +114,9 @@ class PlayerPerformanceSimulator(Simulator):
 
 
 class PlayerComparisonSimulator(Simulator):
+
+    def __init__(self, keep_alive=False):
+        self._keep_alive = keep_alive
 
     @staticmethod
     def _run_sim(simulator, games_per_sim):
@@ -120,14 +126,15 @@ class PlayerComparisonSimulator(Simulator):
         opp = RandomComputerPlayer()
         start_time = timeit.default_timer()
         with multiprocessing.Pool() as pool:
-            results = pool.starmap(self._run_sim, [(PlayerPerformanceSimulator(player, opp), games_per_sim)] * num_sims)
+            results = pool.starmap(self._run_sim, [(PlayerPerformanceSimulator(player, opp, self._keep_alive),
+                                                    games_per_sim)] * num_sims)
         time_taken = timeit.default_timer() - start_time
         results = Collector.combine(results, player, opp)
         print(f'Simulations: {num_sims*games_per_sim} :: {results} :: Time {time_taken}')
         self.record_results(self.__class__.__name__, num_sims*games_per_sim, results)
 
     def run(self, num_sims=5, games_per_sim=200):
-        players = [ComputerPlayerV1(), ComputerPlayerV2(), ComputerPlayerV3()]
+        players = [ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(), ComputerPlayerV4()]
         for player in players:
             self._run_for_player(player, num_sims, games_per_sim)
 
