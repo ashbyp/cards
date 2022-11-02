@@ -107,8 +107,10 @@ class Card:
 
 
 class Deck:
-    def __init__(self, cards=None):
+    def __init__(self, cards=None, shuffle=False):
         self._cards = standard_deck() if not cards else cards
+        if shuffle:
+            self.shuffle()
 
     def shuffle(self):
         random.shuffle(self._cards)
@@ -139,6 +141,9 @@ class Deck:
 
     def return_cards(self, returned):
         self._cards.extend(returned)
+
+    def combinations_remaining(self, size):
+        return itertools.combinations(self._cards, size)
 
 
 def standard_deck():
@@ -176,7 +181,6 @@ def is_run(cards, ace_high=False):
 
     for i in range(0, len(cards) - 1):
         if not cards[i].is_next_rank(cards[i+1], ace_high):
-        #if cards[i].rank != cards[i+1].rank - 1:
             return False
     return True
 
