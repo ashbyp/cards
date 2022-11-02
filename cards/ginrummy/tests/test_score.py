@@ -67,9 +67,34 @@ class TestScore(TestCase):
     def test_no_sequences(self):
         hand = Card.from_str_list('1c,2d,3h,4s,5c,6d,7h,8s,9c,10d')
         all_card_values = sum(x.value for x in hand)
-        sequences, deadwood_count = score.score_hand(hand)
-        self.assertFalse(sequences)
-        self.assertEqual(all_card_values, deadwood_count)
+        results = score.score_hand(hand)
+        self.assertEqual([], results[0])
+        self.assertEqual(hand, results[1])
+        self.assertEqual(all_card_values, results[2])
+
+    def test_score_hand_run_and_three_of_a_kind_not_overlapping(self):
+        hand = Card.from_str_list('2c,3c,4c,5d,5h,5h,8c,9s,10d,jh')
+        results = score.score_hand(hand)
+        import pprint
+        pprint.pprint(results)
+
+    def test_score_hand_run_and_three_of_a_kind_overlapping(self):
+        hand = Card.from_str_list('2c,3c,4c,4d,4h,7h,8c,9s,10d,jh')
+        results = score.score_hand(hand)
+        import pprint
+        pprint.pprint(results)
+
+    def test_score_hand_run_and_four_of_a_kind_not_overlapping(self):
+        hand = Card.from_str_list('2c,3c,4c,6c,6d,6h,6s,8c,9s,10d,jh')
+        results = score.score_hand(hand)
+        import pprint
+        pprint.pprint(results)
+
+    def test_score_hand_run_and_four_of_a_kind_overlapping(self):
+        hand = Card.from_str_list('2c,3c,4c,4d,4h,4s,8c,9s,10d,jh')
+        results = score.score_hand(hand)
+        import pprint
+        pprint.pprint(results)
 
 
 
