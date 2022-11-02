@@ -1,5 +1,5 @@
 from unittest import TestCase
-from cards.base.utils import all_subsets, remove_subsets, sets_to_sorted_lists
+from cards.base.utils import all_subsets, remove_subsets, sets_to_sorted_lists, remove_intersecting_sets
 from cards.base.card import Card
 
 
@@ -71,3 +71,29 @@ class TestCard(TestCase):
         lists = sets_to_sorted_lists(sets)
         self.assertEqual([Card.from_str_list('2c, 3c, 4c'), Card.from_str_list('2c, 3c, 4c, 5c')], lists)
 
+    def test_remove_intersecting_sets(self):
+        sets = [set([1, 2]), set([3, 4])]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(2, len(removed))
+
+        sets = [set([1, 2]), set([1, 4])]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(1, len(removed))
+
+        sets = [set([1, 2]), set([1, 4]), set([5, 6])]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(2, len(removed))
+
+    def test_remove_intersecting_sets_of_cards(self):
+        sets = [set(Card.from_str_list('2c, 3c')), set(Card.from_str_list('4c, 5c'))]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(2, len(removed))
+
+        sets = [set(Card.from_str_list('2c, 3c')), set(Card.from_str_list('3c, 10c'))]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(1, len(removed))
+
+        sets = [set(Card.from_str_list('2c, 3c')), set(Card.from_str_list('3c, 10c')),
+                set(Card.from_str_list('10s, 11s'))]
+        removed = remove_intersecting_sets(sets)
+        self.assertEqual(2, len(removed))

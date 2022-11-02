@@ -1,5 +1,6 @@
-from itertools import chain, combinations
 from cards.base.card import three_of_a_kind, four_of_a_kind, same_suit_all_runs
+from cards.base.utils import all_subsets, remove_intersecting_sets
+
 
 def find_all_melds(hand):
     melds = []
@@ -22,7 +23,7 @@ def find_all_melds(hand):
 
 def score_hand(hand):
     # results = score_hand(hand)
-    # results contains all scores, highest score to lowest
+    # results contains all scores, lowest score to highest
     #   [
     #       [ [[meld1], [meld2]], [deadwood], deadwood_count ],
     #       [ [[meld1]],          [deadwood], deadwood_count ],
@@ -34,36 +35,22 @@ def score_hand(hand):
     if len(hand) not in (10, 11):
         raise ValueError('length of hand must be 10 or 11 cards')
 
-    all_melds = find_all_melds(hand)
+    all_melds = [set(m) for m in find_all_melds(hand)]
     if not all_melds:
         return [[], hand, sum(x.value for x in hand)]
 
     # brute force, look at every meld combination
-
-    def all_subsets(ss):
-        return chain(*map(lambda x: combinations(ss, x), range(0, len(ss) + 1)))
-
-    valid_combinations = []
-    for subset in all_subsets(all_melds):
-        if subset:
-            subset = list(subset)
-            valid_combs = [subset[0]]
-            for i in range(1, len(subset)):
-                comb = subset[i]
-                is_subset = False
-                for valid in valid_combs:
-                    if set(valid).intersection(comb):
-                        is_subset = True
-                        break
-                if not is_subset:
-                    valid_combs.append(comb)
-
-            valid_combinations.append(valid_combs)
+    potential_scores = list(all_subsets(all_melds))
+    scores = []
+    for p in potential_scores:
+        score = remove_intersecting_sets(p)
+        if score and score not in scores:
+            scores.append(score)
 
     results = []
+    for score in scores:
+        flat_score = [card for meld in score for card in meld]
+        deadwood = [card for card in hand if card not in flat_score]
+        results.append([score, deadwood, sum(x.value for x in deadwood)])
 
-    for comb in valid_combinations:
-        results.append([comb, None, 10])
-
-    return results
-
+    return sorted(results, key=lambda x: x[2])

@@ -73,28 +73,44 @@ class TestScore(TestCase):
         self.assertEqual(all_card_values, results[2])
 
     def test_score_hand_run_and_three_of_a_kind_not_overlapping(self):
-        hand = Card.from_str_list('2c,3c,4c,5d,5h,5h,8c,9s,10d,jh')
+        hand = Card.from_str_list('2c,3c,4c,5d,5h,5s,8c,9s,10d,jh')
         results = score.score_hand(hand)
-        import pprint
-        pprint.pprint(results)
+        self.assertEqual(3, len(results))
+        best_melds = results[0][0]
+        deadwood = results[0][1]
+        deadwood_count = results[0][2]
+        self.assertEqual(2, len(best_melds))
+        self.assertTrue(set(Card.from_str_list('2c,3c,4c')) in best_melds)
+        self.assertTrue(set(Card.from_str_list('5d,5h,5s')) in best_melds)
+        self.assertEqual(set(Card.from_str_list('8c,9s,10d,jh')), set(deadwood))
+        self.assertEqual(37, deadwood_count)
 
     def test_score_hand_run_and_three_of_a_kind_overlapping(self):
         hand = Card.from_str_list('2c,3c,4c,4d,4h,7h,8c,9s,10d,jh')
         results = score.score_hand(hand)
-        import pprint
-        pprint.pprint(results)
+        self.assertEqual(2, len(results))
+        self.assertEqual(49, results[0][2])  # deadwood for the 3 4's meld
+        self.assertEqual(52, results[1][2])  # deadwood for the run meld
 
     def test_score_hand_run_and_four_of_a_kind_not_overlapping(self):
         hand = Card.from_str_list('2c,3c,4c,6c,6d,6h,6s,8c,9s,10d,jh')
         results = score.score_hand(hand)
-        import pprint
-        pprint.pprint(results)
+        best_melds = results[0][0]
+        deadwood = results[0][1]
+        deadwood_count = results[0][2]
+        self.assertEqual(2, len(best_melds))
+        self.assertTrue(set(Card.from_str_list('2c,3c,4c')) in best_melds)
+        self.assertTrue(set(Card.from_str_list('6c,6d,6h,6s')) in best_melds)
+        self.assertEqual(set(Card.from_str_list('8c,9s,10d,jh')), set(deadwood))
+        self.assertEqual(37, deadwood_count)
 
     def test_score_hand_run_and_four_of_a_kind_overlapping(self):
         hand = Card.from_str_list('2c,3c,4c,4d,4h,4s,8c,9s,10d,jh')
         results = score.score_hand(hand)
-        import pprint
-        pprint.pprint(results)
+        self.assertEqual(37, results[0][2])   # deadwood for 3x4's and a run
+        self.assertEqual(42, results[1][2])   # deadwood for the 4 4's meld
+        self.assertEqual(49, results[-1][2])  # worst hand is the run of 3 on it's own
+
 
 
 
