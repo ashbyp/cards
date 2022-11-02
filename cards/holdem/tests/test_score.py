@@ -1,4 +1,4 @@
-from cards.poker.score import eval_desc, eval_hand
+from holdem.score import eval_desc, eval_hand
 from cards.base.card import Card
 from unittest import TestCase
 
