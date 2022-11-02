@@ -1,9 +1,9 @@
-from cards.holdem.score import eval_desc, eval_hand, best_hand
+from cards.holdem.score import eval_desc, eval_hand, best_five_cards, winning_hand
 from cards.base.card import Card, hands_equal
 from unittest import TestCase
 
 
-class TestCard(TestCase):
+class TestScores(TestCase):
 
     def setUp(self):
         self.straight_flush = Card.from_str_list("10d jd qd kd ad", sep=' ')
@@ -111,21 +111,63 @@ class TestCard(TestCase):
             eval_hand(Card.from_str_list("Ad 2s 3s 4s 5s", sep=' '))
         )
 
-    def test_best_hand(self):
+    def test_best_five_cards(self):
         with self.assertRaises(ValueError):
-            best_hand(Card.from_str_list("10d 9s 10c kd", sep=' '))
+            best_five_cards(Card.from_str_list("10d 9s 10c kd", sep=' '))
 
         hand = sorted(Card.from_str_list("10d 9s 10c kd ad", sep=' '))
-        self.assertTrue(hands_equal(best_hand(hand)[0], hand))
+        self.assertTrue(hands_equal(best_five_cards(hand)[0], hand))
 
         hand = Card.from_str_list("10d 3h 10c kd ad 3s 8s 4s qs", sep=' ')
-        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("3h,3s,10d,10c,ad")))
+        self.assertTrue(hands_equal(best_five_cards(hand)[0], Card.from_str_list("3h,3s,10d,10c,ad")))
 
         hand = Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs", sep=' ')
-        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,jd,qs,kd,ad")))
+        self.assertTrue(hands_equal(best_five_cards(hand)[0], Card.from_str_list("10d,jd,qs,kd,ad")))
 
         hand = Card.from_str_list("10d 10s 10c kd ad 3s 8s jd qs 3c", sep=' ')
-        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,10s,10c,3s,3c")))
+        self.assertTrue(hands_equal(best_five_cards(hand)[0], Card.from_str_list("10d,10s,10c,3s,3c")))
 
         hand = Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' ')
-        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,jd,qd,kd,ad")))
+        self.assertTrue(hands_equal(best_five_cards(hand)[0], Card.from_str_list("10d,jd,qd,kd,ad")))
+
+    def test_winning_hand_base_cases(self):
+        board = []
+        hands = []
+        with self.assertRaises(ValueError):
+            winning_hand(board, hands)
+
+        board = Card.from_str_list("10d,9s,10c,kd,ad")
+        hands = []
+        with self.assertRaises(ValueError):
+            winning_hand(board, hands)
+
+        hands = [Card.from_str_list('Ac,As')]
+        winning_hands, winning_scores = winning_hand(board, hands)
+        self.assertTrue(len(winning_hands) == 1)
+        self.assertTrue(len(winning_scores) == 1)
+        self.assertIn(hands[0], winning_hands)
+        self.assertEqual(eval_desc(winning_scores[0], verbose=True), "Full House (Ace's over 10's)")
+
+    def test_winning_hand(self):
+        board = Card.from_str_list("10d,9s,10c,kd,ad")
+        hands = [Card.from_str_list('Ac,As'), Card.from_str_list('2c,As')]
+        winning_hands, winning_scores = winning_hand(board, hands)
+        self.assertTrue(len(winning_hands) == 1)
+        self.assertTrue(len(winning_scores) == 1)
+        self.assertIn(hands[0], winning_hands)
+
+        hands = [Card.from_str_list('Ac,As'), Card.from_str_list('2c,As'), Card.from_str_list('Th,Ts')]
+        winning_hands, winning_scores = winning_hand(board, hands)
+        self.assertTrue(len(winning_hands) == 1)
+        self.assertTrue(len(winning_scores) == 1)
+        self.assertIn(hands[2], winning_hands)
+
+        board = Card.from_str_list("8d,9s,10c,jd,ad")
+        hands = [Card.from_str_list('Qc, 3s'), Card.from_str_list('Qd,2s')]
+        winning_hands, winning_scores = winning_hand(board, hands)
+        self.assertTrue(len(winning_hands) == 2)
+        self.assertTrue(len(winning_scores) == 2)
+        self.assertIn(hands[0], winning_hands)
+        self.assertIn(hands[1], winning_hands)
+
+

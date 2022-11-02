@@ -233,9 +233,9 @@ def four_of_a_kind(hand):
             if comb[0].rank == comb[1].rank == comb[2].rank == comb[3].rank]
 
 
-def hands_equal(*args):
-    base = set(args[0])
-    for h in args[1:]:
+def hands_equal(*hands):
+    base = set(hands[0])
+    for h in hands[1:]:
         if set(h) != base:
             return False
     return True
