@@ -1,5 +1,5 @@
-from holdem.score import eval_desc, eval_hand
-from cards.base.card import Card
+from cards.holdem.score import eval_desc, eval_hand, best_hand
+from cards.base.card import Card, hands_equal
 from unittest import TestCase
 
 
@@ -110,3 +110,22 @@ class TestCard(TestCase):
             eval_hand(Card.from_str_list("9d 10s js qs ks", sep=' ')) >
             eval_hand(Card.from_str_list("Ad 2s 3s 4s 5s", sep=' '))
         )
+
+    def test_best_hand(self):
+        with self.assertRaises(ValueError):
+            best_hand(Card.from_str_list("10d 9s 10c kd", sep=' '))
+
+        hand = sorted(Card.from_str_list("10d 9s 10c kd ad", sep=' '))
+        self.assertTrue(hands_equal(best_hand(hand)[0], hand))
+
+        hand = Card.from_str_list("10d 3h 10c kd ad 3s 8s 4s qs", sep=' ')
+        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("3h,3s,10d,10c,ad")))
+
+        hand = Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs", sep=' ')
+        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,jd,qs,kd,ad")))
+
+        hand = Card.from_str_list("10d 10s 10c kd ad 3s 8s jd qs 3c", sep=' ')
+        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,10s,10c,3s,3c")))
+
+        hand = Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' ')
+        self.assertTrue(hands_equal(best_hand(hand)[0], Card.from_str_list("10d,jd,qd,kd,ad")))
