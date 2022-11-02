@@ -64,6 +64,23 @@ class TestStats(TestCase):
         self.assertEqual((1, 0, 0), self._collector.averages(self._p1))
         self.assertEqual((4, 0, 0), self._collector.averages(self._p2))
 
+    def test_combine(self):
+        c1 = Collector(self._p1, self._p2)
+        c2 = Collector(self._p1, self._p2)
+        c1.add_pegging_score(self._p1, 3)
+        c2.add_pegging_score(self._p1, 4)
+        c1.add_hand_score(self._p1, 10)
+        c2.add_hand_score(self._p1, 11)
+        c1.add_box_score(self._p1, 8)
+        c2.add_box_score(self._p1, 9)
+
+        self.assertEqual((3, 10, 8), c1.averages(self._p1))
+        self.assertEqual((4, 11, 9), c2.averages(self._p1))
+
+        combined = Collector.combine((c1, c2), self._p1, self._p2)
+
+        self.assertEqual((3.5, 10.5, 8.5), combined.averages(self._p1))
+
     def test_reduce(self):
         c1 = Collector(self._p1, self._p2)
         c2 = Collector(self._p1, self._p2)

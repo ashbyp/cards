@@ -1,5 +1,6 @@
 import random
 import itertools
+import numpy as np
 from cards.base.card import Card, standard_deck
 from cards.cribbage import score
 
@@ -17,6 +18,9 @@ class Player:
         raise NotImplementedError()
 
     def next_pegging_card(self, stack, hand, turn_card):
+        raise NotImplementedError()
+
+    def strategy(self):
         raise NotImplementedError()
 
 
@@ -41,6 +45,9 @@ class DumbComputerPlayer(Player):
                 return card
         return None
 
+    def strategy(self):
+        return "I will discard the first two cards dealt to me, and peg the first legal card in my hand"
+
 
 class RandomComputerPlayer(Player):
     ME_COUNT = 1
@@ -63,55 +70,62 @@ class RandomComputerPlayer(Player):
                 return card
         return None
 
+    def strategy(self):
+        return "I will discard two random cards, and play a random pegging card"
+
 
 class HumanPlayer(DumbComputerPlayer):  # for now
     def __init__(self):
-        name = input('What is your name? ')
+        name = input(' --> What is your name? ')
         super().__init__(name)
+        self._strategy = input('\n --> What is your strategy? ') or 'Not declared'
 
     def choose_discards(self, hand, your_box):
-        print(f'\nYour dealt cards are: {hand}')
+        print(f'\n --> Your dealt cards are: {hand}')
         while True:
             try:
                 user_input = None
                 while not user_input:
-                    user_input = input('\nWhat will you discard? ')
+                    user_input = input('\n --> What will you discard? ')
                 cards = Card.from_str_list(user_input)
                 if set(cards).issubset(set(hand)):
                     if len(set(cards)) == 2:
                         return cards
                     else:
-                        print('Select two cards please, try again')
+                        print(' --> Select two cards please, try again')
                 else:
-                    print('Please select valid cards from your hand, try again')
+                    print(' --> Please select valid cards from your hand, try again')
             except ValueError as e:
-                print(f'Input error "{e}"')
+                print(f' *** Input error "{e}"')
 
     def next_pegging_card(self, stack, hand, turn_card):
         if not hand:
             return None
-        print(f'\nYour hand is {hand}')
+        print(f'\n --> Your hand is {hand}')
         stack_total = sum([x.value for x in stack])
         go_allowed = (min([x.value for x in hand]) + stack_total) > 31
         while True:
             try:
-                user_input = input('\nWhat will you peg next (return for GO)? ')
+                user_input = input('\n --> What will you peg next (return for GO)? ')
                 if not user_input:
                     if go_allowed:
                         return None
                     else:
-                        print('GO not allowed, you can play')
+                        print(' *** GO not allowed, you can play')
                         continue
                 card = Card.from_str(user_input)
                 if card in hand:
                     if (card.value + stack_total) > 31:
-                        print('Total would be more than 31, try again')
+                        print(' *** Total would be more than 31, try again')
                     else:
                         return card
                 else:
-                    print('Selection is not a subset of your cards, try again')
+                    print(f' *** You don\'t  have {card} in your hand')
             except ValueError as e:
-                print(f'Input error "{e}"')
+                print(f' *** Input error "{e}"')
+
+    def strategy(self):
+        return self._strategy
 
 
 class ComputerPlayerV1(Player):
@@ -147,6 +161,11 @@ class ComputerPlayerV1(Player):
                 return hand[i]
 
         return None
+
+    def strategy(self):
+        return "I will discard two cards that leave the best score in my hand, I will not consider the score of\n" +\
+               " the cards thrown into the box or the turn card.  When pegging, I will play the card that gives\n" +\
+               " me the best score, or if all equal, then a random card"
 
 
 class ComputerPlayerV2(ComputerPlayerV1):
@@ -188,6 +207,12 @@ class ComputerPlayerV2(ComputerPlayerV1):
 
         return None
 
+    def strategy(self):
+        return "I will discard two cards that leave the best score in my hand, I will not consider the score of\n" +\
+               " the cards thrown into the box or the turn card.  When pegging, I will play the card that gives\n" +\
+               " me the best score, or if all equal, then a random car and will prefer not to leave a stack count\n" +\
+               " of 5 or 21"
+
 
 class ComputerPlayerV3(ComputerPlayerV2):
     ME_COUNT = 1
@@ -219,12 +244,18 @@ class ComputerPlayerV3(ComputerPlayerV2):
 
         best_score = 0
         best_hand = None
-        for comb, average_score in [(comb, sum(scores)/len(scores)) for comb, scores in hand_scores]:
+        for comb, average_score in [(comb, sum(scores) / len(scores)) for comb, scores in hand_scores]:
             if average_score > best_score:
                 best_score = average_score
                 best_hand = comb
 
         return [x for x in hand if x not in best_hand]
+
+    def strategy(self):
+        return "I will evaluate all possible hands with all possible turn cards, and discard the two cards that\n" +\
+                " gives me the highest average hand score, I will not consider the score of the cards thrown into\n" +\
+                " the box.  When pegging, I will play the card that gives me the best score, or if all equal\n" +\
+                " then a random card; and will prefer not to leave a stack count of 5 or 21"
 
 
 class ComputerPlayerV4(ComputerPlayerV3):
