@@ -12,5 +12,5 @@ class TestSimulator(TestCase):
         if not self.is_win:
             print('\n\nRunning simulations')
             sim = PlayerComparisonSimulator(keep_alive=True)
-            sim.run()
+            sim.run(5, 20)
         self.assertTrue(True)
