@@ -1,7 +1,7 @@
 import random
 import timeit
 from unittest import TestCase
-from cards.base.card import Card, standard_deck
+from cards.base.card import Card, standard_deck, split_suits, split_ranks
 
 
 class TestCard(TestCase):
@@ -81,3 +81,21 @@ class TestCard(TestCase):
 
         print(f'List {list_time_taken} vs Set {set_time_taken}')
         self.assertTrue(set_time_taken < list_time_taken)
+
+    def test_split_suits(self):
+        cards = Card.from_str_list('2d,3c,5h,qh')
+        suits = split_suits(cards)
+        self.assertEqual(4, len(suits))
+        self.assertDictEqual(
+            suits,
+            {'D': [Card.from_str('2d')], 'C': [Card.from_str('3c')], 'H': Card.from_str_list('5h,qh'), 'S': []})
+
+    def test_split_ranks(self):
+        cards = Card.from_str_list('2d,3c,5h,5s')
+        ranks = split_ranks(cards)
+        self.assertEqual(3, len(ranks))
+        self.assertDictEqual(
+            ranks,
+            {2: [Card.from_str('2d')], 3: [Card.from_str('3c')], 5: Card.from_str_list('5h,5s')})
+
+
