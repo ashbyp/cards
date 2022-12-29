@@ -1,10 +1,11 @@
 from cards.base.card import Deck
-from cards.holdem.score import eval_hand, winning_hand
+from cards.holdem.score import eval_hand, winning_hand, eval_desc, best_five_cards
+from cards.utils.measure import timeblock
 import timeit
 import functools
 
 
-def winning_chance(deck, initial_board, hands, debug=1):
+def winning_chance(deck, initial_board, hands, debug=0):
     if debug > 1:
         print(f' Init: {initial_board}')
 
@@ -76,29 +77,31 @@ run_turn_sim = functools.partial(run_sims, 'Turn', 3)
 run_river_sim = functools.partial(run_sims, 'River', 4)
 
 
-def test_stuff():
-    # deck = Deck(shuffle=True)
-    # hands = deck.deal_hands(num_players=2, cards_per_hand=2)
-    # board = deck.deal_hand(4)
-    # print(f'HANDS:   {hands}')
-    # print(f'BOARD:   {board}')
-    # print(f'CHANCES: {winning_chance(deck, board, hands)}')
-
-    # deck = Deck(shuffle=True)
-    # hands = deck.deal_hands(num_players=2, cards_per_hand=2)
-    # board = deck.deal_hand(3)
-    # print(f'HANDS:   {hands}')
-    # print(f'BOARD:   {board}')
-    # print(f'CHANCES: {winning_chance(deck, board, hands)}')
-    #
+def run_winning_chances(num_players=2, num_board=3):
     deck = Deck(shuffle=True)
-    hands = deck.deal_hands(num_players=9, cards_per_hand=2)
-    board = []
+    hands = deck.deal_hands(num_players=num_players, cards_per_hand=2)
+    board = deck.deal_hand(num_board)
     print(f'HANDS:   {hands}')
     print(f'BOARD:   {board}')
     print(f'CHANCES: {winning_chance(deck, board, hands)}')
 
 
+def run_winning_chances_verbose(num_players=2, num_board=3):
+    deck = Deck(shuffle=True)
+    hands = deck.deal_hands(num_players=num_players, cards_per_hand=2)
+    board = deck.deal_hand(num_board)
+    print(f'HANDS:   {hands}')
+    print(f'BOARD:   {board}')
+    chances = winning_chance(deck, board, hands)
+    for h, c in zip(hands, chances):
+        _, score = best_five_cards(h + board)
+        print(f'{h}  {c:.2f} {eval_desc(score, verbose=True)}', end= '\n')
+    print()
+    print(f'Sum: {sum(chances):.2f}')
+
+
 if __name__ == '__main__':
     import cProfile
-    cProfile.run('test_stuff()')
+    #cProfile.run('test_stuff()')
+    with timeblock():
+        run_winning_chances(num_players=6, num_board=2)
