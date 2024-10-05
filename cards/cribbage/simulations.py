@@ -138,7 +138,7 @@ class PlayerComparisonSimulator(Simulator):
         players = [RandomComputerPlayer(), ComputerPlayerV1(), ComputerPlayerV2(),  ComputerPlayerV3(),
                    ComputerPlayerV4(), ComputerPlayerV5(), ComputerPlayerV6(), ComputerPlayerV7()]
         for player in players:
-            self._run_for_player(player, num_sims, games_per_sim)kkkkllll
+            self._run_for_player(player, num_sims, games_per_sim)
 
 def profile_player(player):
     global sim
