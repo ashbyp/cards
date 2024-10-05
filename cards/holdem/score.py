@@ -144,5 +144,5 @@ def winning_hand(board, hands):
 
 if __name__ == '__main__':
     score_some_hands()
-    print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
-    print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
+    # print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad", sep=' ')))
+    # print(best_five_cards(Card.from_str_list("10d 9s 10c kd ad 3s 8s jd qs qd", sep=' '))[0])
